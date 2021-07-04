@@ -1,0 +1,54 @@
+
+ ==============================
+ S N O P T  7.2-5    (May 2007)
+ ==============================
+ 
+ SNMEMB EXIT 100 -- finished successfully
+ SNMEMB INFO 104 -- memory requirements estimated
+
+ ==============================
+ S N O P T  7.2-5    (May 2007)
+ ==============================
+ 
+ 
+
+ Nonlinear constraints      21     Linear constraints       0
+ Nonlinear variables        10     Linear variables         0
+ Jacobian  variables        10     Objective variables     10
+ Total constraints          21     Total variables         10
+ 
+
+ 
+ The user has defined      58   out of      58   constraint gradients.
+ The user has defined      10   out of      10   objective  gradients.
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     0      2               1  9.0E-04  9.9E-03  9.3787238E+03     1           r i
+     1      1  1.0E+00      2  9.0E-04 (7.8E-12) 7.7242682E+09     1         n r i
+ 
+ SNOPTC EXIT  10 -- the problem appears to be infeasible
+ SNOPTC INFO  13 -- nonlinear infeasibilities minimized
+
+ Problem name                 O
+ No. of iterations                   3   Objective value      3.3392909686E+00
+ No. of infeasibilities              3   Sum of infeas        1.3000000000E-01
+ Elastic weight                5.9E+10   Scaled Merit         1.3000000006E-01
+ No. of major iterations             1   Linear objective     0.0000000000E+00
+ Penalty parameter           0.000E+00   Nonlinear objective  3.3392909686E+00
+ No. of calls to funobj              3   No. of calls to funcon              3
+ No. of superbasics                  1   No. of basic nonlinears             7
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 1.4E+02   Max pi                     15 5.9E+10
+ Max Primal infeas          27 8.0E-02   Max Dual infeas             8 6.3E+00
+ Nonlinear constraint violn    8.0E-02
+ 
+ 
+
+ Solution printed on file  18
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                      26.09 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                 54.70 seconds
+ Time for objective function                    0.00 seconds

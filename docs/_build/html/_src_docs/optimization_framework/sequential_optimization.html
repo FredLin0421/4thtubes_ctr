@@ -1,0 +1,687 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Step 2 : Seqeuential optimization &mdash; CTR 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/jupyter-sphinx.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/thebelab.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.14.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Step 3 : Simultaneous optimization" href="simultaneous_optimization.html" />
+    <link rel="prev" title="Step 1: Path optimization" href="path_optimization.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CTR
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ctr_kinematics.html">CTR Kinematics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../optimization_framework.html">CTR optimization framework</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="path_optimization.html">Step 1: Path optimization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Step 2 : Seqeuential optimization</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simultaneous_optimization.html">Step 3 : Simultaneous optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Clinical examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CTR</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../optimization_framework.html">CTR optimization framework</a> &raquo;</li>
+        
+      <li>Step 2 : Seqeuential optimization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/_src_docs/optimization_framework/sequential_optimization.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="step-2-seqeuential-optimization">
+<h1>Step 2 : Seqeuential optimization<a class="headerlink" href="#step-2-seqeuential-optimization" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="optimization-problem">
+<h2>Optimization problem<a class="headerlink" href="#optimization-problem" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial, we will show you how to construct and use the sequential optimization problem in OpenMDAO.</p>
+<p>The CTR sequential optimization group is as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.io</span>
+<span class="kn">import</span> <span class="nn">openmdao.api</span> <span class="kn">as</span> <span class="nn">om</span>
+<span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Group</span><span class="p">,</span> <span class="n">ExecComp</span><span class="p">,</span> <span class="n">IndepVarComp</span><span class="p">,</span> <span class="n">ScipyOptimizeDriver</span><span class="p">,</span> <span class="n">pyOptSparseDriver</span>
+<span class="c1"># from openmdao.api import Problem, Group, ExecComp, IndepVarComp, ScipyOptimizeDriver</span>
+<span class="kn">from</span> <span class="nn">ozone.api</span> <span class="kn">import</span> <span class="n">ODEIntegrator</span>
+
+<span class="kn">from</span> <span class="nn">stiffness_comp</span> <span class="kn">import</span> <span class="n">StiffnessComp</span>
+<span class="kn">from</span> <span class="nn">CtrFunction</span> <span class="kn">import</span> <span class="n">CtrFunction</span>
+<span class="kn">from</span> <span class="nn">tensor_comp</span> <span class="kn">import</span> <span class="n">TensorComp</span>
+<span class="kn">from</span> <span class="nn">rhs_comp</span> <span class="kn">import</span> <span class="n">RHSComp</span>
+<span class="kn">from</span> <span class="nn">kinematics_comp</span> <span class="kn">import</span> <span class="n">KinematicsComp</span>
+<span class="kn">from</span> <span class="nn">k_comp</span> <span class="kn">import</span> <span class="n">KComp</span>
+<span class="kn">from</span> <span class="nn">sumk_comp</span> <span class="kn">import</span> <span class="n">SumkComp</span>
+<span class="kn">from</span> <span class="nn">sumkm_comp</span> <span class="kn">import</span> <span class="n">SumkmComp</span>
+<span class="kn">from</span> <span class="nn">invsumk_comp</span> <span class="kn">import</span> <span class="n">InvsumkComp</span>
+<span class="kn">from</span> <span class="nn">tubeends_comp</span> <span class="kn">import</span> <span class="n">TubeendsComp</span>
+<span class="kn">from</span> <span class="nn">initpsi_comp</span> <span class="kn">import</span> <span class="n">InitialpsiComp</span>
+<span class="kn">from</span> <span class="nn">penalize_comp</span> <span class="kn">import</span> <span class="n">PenalizeComp</span>
+<span class="kn">from</span> <span class="nn">interpolationkp_comp</span> <span class="kn">import</span> <span class="n">InterpolationkpComp</span>
+<span class="kn">from</span> <span class="nn">straightends_comp</span> <span class="kn">import</span> <span class="n">StraightendsComp</span>
+<span class="kn">from</span> <span class="nn">kappa_comp</span> <span class="kn">import</span> <span class="n">KappaComp</span>
+<span class="kn">from</span> <span class="nn">kout_comp</span> <span class="kn">import</span> <span class="n">KoutComp</span>
+<span class="kn">from</span> <span class="nn">interpolationkb_comp</span> <span class="kn">import</span> <span class="n">InterpolationkbComp</span>
+<span class="kn">from</span> <span class="nn">interpolationkp_comp</span> <span class="kn">import</span> <span class="n">InterpolationkpComp</span>
+<span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">TestComp</span>
+<span class="s1">&#39;backbone comps&#39;</span>
+<span class="kn">from</span> <span class="nn">backbonefunction</span> <span class="kn">import</span> <span class="n">BackboneFunction</span>
+<span class="kn">from</span> <span class="nn">initR_comp</span> <span class="kn">import</span> <span class="n">InitialRComp</span>
+<span class="kn">from</span> <span class="nn">u1_comp</span> <span class="kn">import</span> <span class="n">U1Comp</span>
+<span class="kn">from</span> <span class="nn">u2_comp</span> <span class="kn">import</span> <span class="n">U2Comp</span>
+<span class="kn">from</span> <span class="nn">u3_comp</span> <span class="kn">import</span> <span class="n">U3Comp</span>
+<span class="kn">from</span> <span class="nn">u_comp</span> <span class="kn">import</span> <span class="n">UComp</span>
+<span class="kn">from</span> <span class="nn">uhat_comp</span> <span class="kn">import</span> <span class="n">UhatComp</span>
+<span class="kn">from</span> <span class="nn">bborientation</span> <span class="kn">import</span> <span class="n">BborientationComp</span>
+<span class="kn">from</span> <span class="nn">backboneptsFunction</span> <span class="kn">import</span> <span class="n">BackboneptsFunction</span>
+<span class="s1">&#39;Integrator&#39;</span>
+<span class="kn">from</span> <span class="nn">finaltime_comp</span> <span class="kn">import</span> <span class="n">FinaltimeComp</span>
+<span class="s1">&#39;base angle&#39;</span>
+<span class="kn">from</span> <span class="nn">baseangle_comp</span> <span class="kn">import</span> <span class="n">BaseangleComp</span>
+<span class="kn">from</span> <span class="nn">rotp_comp</span> <span class="kn">import</span> <span class="n">RotpComp</span>
+<span class="kn">from</span> <span class="nn">baseplanar_comp</span> <span class="kn">import</span> <span class="n">BaseplanarComp</span>
+<span class="s1">&#39;constraints&#39;</span>
+<span class="kn">from</span> <span class="nn">diameter_comp</span> <span class="kn">import</span> <span class="n">DiameterComp</span>
+<span class="kn">from</span> <span class="nn">tubeclearance_comp</span> <span class="kn">import</span> <span class="n">TubeclearanceComp</span>
+<span class="kn">from</span> <span class="nn">bc_comp</span> <span class="kn">import</span> <span class="n">BcComp</span>
+<span class="kn">from</span> <span class="nn">desiredpoints_comp</span> <span class="kn">import</span> <span class="n">DesiredpointsComp</span>
+<span class="kn">from</span> <span class="nn">deployedlength_comp</span> <span class="kn">import</span> <span class="n">DeployedlengthComp</span>
+<span class="kn">from</span> <span class="nn">beta_comp</span> <span class="kn">import</span> <span class="n">BetaComp</span>
+<span class="kn">from</span> <span class="nn">pathpoints_comp</span> <span class="kn">import</span> <span class="n">PathpointsComp</span>
+<span class="kn">from</span> <span class="nn">tubestraight_comp</span> <span class="kn">import</span> <span class="n">TubestraightComp</span>
+<span class="kn">from</span> <span class="nn">tiporientation_comp</span> <span class="kn">import</span> <span class="n">TiporientationComp</span>
+<span class="kn">from</span> <span class="nn">chi_comp</span> <span class="kn">import</span> <span class="n">ChiComp</span>
+<span class="kn">from</span> <span class="nn">gamma_comp</span> <span class="kn">import</span> <span class="n">GammaComp</span>
+<span class="kn">from</span> <span class="nn">kappaeq_comp</span> <span class="kn">import</span> <span class="n">KappaeqComp</span>
+<span class="kn">from</span> <span class="nn">strain_comp</span> <span class="kn">import</span> <span class="n">StrainComp</span>
+<span class="kn">from</span> <span class="nn">ksconstraints_comp</span> <span class="kn">import</span> <span class="n">KSConstraintsComp</span>
+<span class="kn">from</span> <span class="nn">ksconstraints_min_comp</span> <span class="kn">import</span> <span class="n">KSConstraintsMinComp</span>
+<span class="kn">from</span> <span class="nn">reducedimension_comp</span> <span class="kn">import</span> <span class="n">ReducedimensionComp</span>
+<span class="kn">from</span> <span class="nn">strainvirtual_comp</span> <span class="kn">import</span> <span class="n">StrainvirtualComp</span>
+<span class="s1">&#39;objective&#39;</span>
+<span class="kn">from</span> <span class="nn">objs_comp</span> <span class="kn">import</span> <span class="n">ObjsComp</span>
+<span class="kn">from</span> <span class="nn">equdply_comp</span> <span class="kn">import</span> <span class="n">EqudplyComp</span>
+<span class="kn">from</span> <span class="nn">reachtargetpts_comp</span> <span class="kn">import</span> <span class="n">ReachtargetptsComp</span>
+<span class="kn">from</span> <span class="nn">targetnorm_comp</span> <span class="kn">import</span> <span class="n">TargetnormComp</span>
+<span class="kn">from</span> <span class="nn">jointvaluereg_comp</span> <span class="kn">import</span> <span class="n">JointvalueregComp</span>
+<span class="kn">from</span> <span class="nn">locnorm_comp</span> <span class="kn">import</span> <span class="n">LocnormComp</span>
+<span class="kn">from</span> <span class="nn">rotnorm_comp</span> <span class="kn">import</span> <span class="n">RotnormComp</span>
+<span class="kn">from</span> <span class="nn">dp_comp</span> <span class="kn">import</span> <span class="n">DpComp</span>
+<span class="kn">from</span> <span class="nn">crosssection_comp</span> <span class="kn">import</span> <span class="n">CrosssectionComp</span>
+<span class="kn">from</span> <span class="nn">signedfun_comp</span> <span class="kn">import</span> <span class="n">SignedfunComp</span>
+<span class="s1">&#39;mesh&#39;</span>
+<span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">trianglemesh</span>
+
+
+<span class="k">class</span> <span class="nc">CtrseqGroup</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;num_nodes&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;tube_nbr&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;pt&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;pt_test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;zeta&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;eps_e&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;eps_r&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;eps_p&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;lag&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;rotx_init&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;roty_init&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;rotz_init&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;base&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;equ_paras&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;pt_full&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;viapts_nbr&#39;</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">num_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;num_nodes&#39;</span><span class="p">]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;i&#39;</span><span class="p">]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
+        <span class="n">equ_paras</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;equ_paras&#39;</span><span class="p">]</span>
+        <span class="n">pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;pt&#39;</span><span class="p">]</span>
+        <span class="n">pt_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;pt_test&#39;</span><span class="p">]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+        <span class="n">zeta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;zeta&#39;</span><span class="p">]</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;rho&#39;</span><span class="p">]</span>
+        <span class="n">eps_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;eps_e&#39;</span><span class="p">]</span>
+        <span class="n">eps_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;eps_r&#39;</span><span class="p">]</span>
+        <span class="n">eps_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;eps_p&#39;</span><span class="p">]</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
+        <span class="n">tube_nbr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;tube_nbr&#39;</span><span class="p">]</span>
+        <span class="n">rotx_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;rotx_init&#39;</span><span class="p">]</span>
+        <span class="n">roty_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;roty_init&#39;</span><span class="p">]</span>
+        <span class="n">rotz_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;rotz_init&#39;</span><span class="p">]</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;center&#39;</span><span class="p">]</span>
+        <span class="n">pt_full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;pt_full&#39;</span><span class="p">]</span>
+        <span class="n">viapts_nbr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;viapts_nbr&#39;</span><span class="p">]</span>
+        <span class="c1"># mesh processing</span>
+        <span class="n">mesh</span>  <span class="o">=</span> <span class="n">trianglemesh</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">pt</span><span class="p">,</span><span class="n">center</span><span class="p">)</span>
+        <span class="n">p_</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">p</span>
+        <span class="n">normals</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">normals</span>
+
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">init_guess</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">loadmat</span><span class="p">(</span><span class="s1">&#39;initial.mat&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">init_guess</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">loadmat</span><span class="p">(</span><span class="s1">&#39;seq_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.mat&#39;</span><span class="p">)</span>
+
+
+
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">IndepVarComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;d1&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;d1&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;d2&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;d2&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;d3&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;d3&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;d4&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;d5&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;d6&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;d6&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;kappa&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;kappa&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;tube_section_length&#39;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;tube_section_length&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;tube_section_straight&#39;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;tube_section_straight&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span><span class="o">+</span><span class="mf">0.01</span><span class="p">)</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;initial_condition_dpsi&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;initial_condition_dpsi&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;rotx&#39;</span><span class="p">,</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;rotx&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;roty&#39;</span><span class="p">,</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;roty&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;rotz&#39;</span><span class="p">,</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;rotz&#39;</span><span class="p">])</span>
+        <span class="n">comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;loc&#39;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">val</span><span class="o">=</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;loc&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;input_comp&#39;</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+
+
+        <span class="c1"># add subsystem</span>
+
+        <span class="s1">&#39;tube twist&#39;</span>
+        <span class="n">stiffness_comp</span> <span class="o">=</span> <span class="n">StiffnessComp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;stiffness_comp&#39;</span><span class="p">,</span> <span class="n">stiffness_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">tube_ends_comp</span> <span class="o">=</span> <span class="n">TubeendsComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;tube_ends_comp&#39;</span><span class="p">,</span> <span class="n">tube_ends_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">interpolationkb_comp</span> <span class="o">=</span>  <span class="n">InterpolationkbComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;interpolationkb_comp&#39;</span><span class="p">,</span> <span class="n">interpolationkb_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">tensor_comp</span> <span class="o">=</span> <span class="n">TensorComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;tensor_comp&#39;</span><span class="p">,</span> <span class="n">tensor_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">sumkm_comp</span> <span class="o">=</span> <span class="n">SumkmComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;sumkm_comp&#39;</span><span class="p">,</span> <span class="n">sumkm_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">invsumk_comp</span> <span class="o">=</span> <span class="n">InvsumkComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;invsumk_comp&#39;</span><span class="p">,</span> <span class="n">invsumk_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">k_comp</span> <span class="o">=</span> <span class="n">KComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;k_comp&#39;</span><span class="p">,</span> <span class="n">k_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">straightedns_comp</span> <span class="o">=</span> <span class="n">StraightendsComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;straightends_comp&#39;</span><span class="p">,</span> <span class="n">straightedns_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">interpolationkp_comp</span> <span class="o">=</span>  <span class="n">InterpolationkpComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;interpolationkp_comp&#39;</span><span class="p">,</span> <span class="n">interpolationkp_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">kappa_comp</span> <span class="o">=</span> <span class="n">KappaComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;kappa_comp&#39;</span><span class="p">,</span> <span class="n">kappa_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">kout_comp</span> <span class="o">=</span> <span class="n">KoutComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;kout_comp&#39;</span><span class="p">,</span> <span class="n">kout_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">initialpsi_comp</span> <span class="o">=</span> <span class="n">InitialpsiComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;initialpsi_comp&#39;</span><span class="p">,</span> <span class="n">initialpsi_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">finaltime_comp</span> <span class="o">=</span> <span class="n">FinaltimeComp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;final_comp&#39;</span><span class="p">,</span> <span class="n">finaltime_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+
+        <span class="n">method_name</span> <span class="o">=</span> <span class="s1">&#39;Lobatto2&#39;</span>
+        <span class="s1">&#39;ODE 1 : kinematics&#39;</span>
+        <span class="n">ode_function1</span> <span class="o">=</span> <span class="n">CtrFunction</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">formulation1</span> <span class="o">=</span> <span class="s1">&#39;time-marching&#39;</span>
+
+        <span class="n">initial_time</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">normalized_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+
+        <span class="n">integrator1</span> <span class="o">=</span> <span class="n">ODEIntegrator</span><span class="p">(</span>
+            <span class="n">ode_function1</span><span class="p">,</span> <span class="n">formulation1</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span>
+            <span class="n">initial_time</span><span class="o">=</span><span class="n">initial_time</span><span class="p">,</span> <span class="n">normalized_times</span><span class="o">=</span><span class="n">normalized_times</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;integrator_group1&#39;</span><span class="p">,</span> <span class="n">integrator1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;final_time&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group1.final_time&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;K_out&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group1.dynamic_parameter:K_out&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;initial_condition_psi&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group1.initial_condition:psi&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;initial_condition_dpsi&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group1.initial_condition:dpsi_ds&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;integrator_group1.state:dpsi_ds&#39;</span><span class="p">,</span><span class="s1">&#39;dpsi_ds&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;integrator_group1.state:psi&#39;</span><span class="p">,</span><span class="s1">&#39;psi&#39;</span><span class="p">)</span>
+
+        <span class="s1">&#39;backbone&#39;</span>
+        <span class="n">u1_comp</span> <span class="o">=</span> <span class="n">U1Comp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;u1_comp&#39;</span><span class="p">,</span> <span class="n">u1_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">u2_comp</span> <span class="o">=</span> <span class="n">U2Comp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;u2_comp&#39;</span><span class="p">,</span> <span class="n">u2_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">u3_comp</span> <span class="o">=</span> <span class="n">U3Comp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;u3_comp&#39;</span><span class="p">,</span> <span class="n">u3_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">u_comp</span> <span class="o">=</span> <span class="n">UComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;u_comp&#39;</span><span class="p">,</span> <span class="n">u_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">uhat_comp</span> <span class="o">=</span> <span class="n">UhatComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;uhat_comp&#39;</span><span class="p">,</span> <span class="n">uhat_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">initR_comp</span> <span class="o">=</span> <span class="n">InitialRComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;initR_comp&#39;</span><span class="p">,</span> <span class="n">initR_comp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+
+        <span class="s1">&#39;ODE 2: Orientation&#39;</span>
+        <span class="n">ode_function2</span> <span class="o">=</span> <span class="n">BackboneFunction</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">formulation2</span> <span class="o">=</span> <span class="s1">&#39;time-marching&#39;</span>
+
+        <span class="n">initial_time</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">normalized_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+        <span class="n">integrator2</span> <span class="o">=</span> <span class="n">ODEIntegrator</span><span class="p">(</span>
+            <span class="n">ode_function2</span><span class="p">,</span> <span class="n">formulation2</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span>
+            <span class="n">initial_time</span><span class="o">=</span><span class="n">initial_time</span><span class="p">,</span> <span class="n">normalized_times</span><span class="o">=</span><span class="n">normalized_times</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;integrator_group2&#39;</span><span class="p">,</span> <span class="n">integrator2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;final_time&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group2.final_time&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;uhat&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group2.dynamic_parameter:uhat&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;initial_condition_R&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group2.initial_condition:R&#39;</span><span class="p">)</span>
+
+        <span class="s1">&#39;ODE 3: Position&#39;</span>
+        <span class="n">ode_function3</span> <span class="o">=</span> <span class="n">BackboneptsFunction</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">formulation3</span> <span class="o">=</span> <span class="s1">&#39;time-marching&#39;</span>
+
+        <span class="n">initial_time</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">normalized_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+        <span class="n">initial_conditions</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="n">integrator3</span> <span class="o">=</span> <span class="n">ODEIntegrator</span><span class="p">(</span>
+            <span class="n">ode_function3</span><span class="p">,</span> <span class="n">formulation3</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span>
+            <span class="n">initial_time</span><span class="o">=</span><span class="n">initial_time</span><span class="p">,</span> <span class="n">normalized_times</span><span class="o">=</span><span class="n">normalized_times</span><span class="p">,</span>
+            <span class="n">initial_conditions</span><span class="o">=</span><span class="n">initial_conditions</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;integrator_group3&#39;</span><span class="p">,</span> <span class="n">integrator3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;final_time&#39;</span><span class="p">,</span> <span class="s1">&#39;integrator_group3.final_time&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;integrator_group2.state:R&#39;</span><span class="p">,</span><span class="s1">&#39;integrator_group3.dynamic_parameter:R&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;integrator_group3.state:p&#39;</span><span class="p">,</span><span class="s1">&#39;p&#39;</span><span class="p">)</span>
+
+        <span class="s1">&#39;Transformation&#39;</span>
+        <span class="n">baseanglecomp</span> <span class="o">=</span> <span class="n">BaseangleComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">rotx_init</span><span class="o">=</span><span class="n">rotx_init</span><span class="p">,</span><span class="n">roty_init</span><span class="o">=</span><span class="n">roty_init</span><span class="p">,</span><span class="n">rotz_init</span><span class="o">=</span><span class="n">rotz_init</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;BaseangleComp&#39;</span><span class="p">,</span> <span class="n">baseanglecomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">rotpcomp</span> <span class="o">=</span> <span class="n">RotpComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;RotpComp&#39;</span><span class="p">,</span> <span class="n">rotpcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+
+
+
+        <span class="s2">&quot;Deisgn variables&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;d1&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mf">0.2</span> <span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;d2&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;d3&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;d4&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;d5&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;d6&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="n">tube_length_init</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">tube_straight_init</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;tube_section_length&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span><span class="n">tube_length_init</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;tube_section_straight&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span><span class="n">tube_straight_init</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">)</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="p">,</span> <span class="o">-</span><span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;tube_section_length&#39;</span><span class="p">]</span><span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span><span class="n">upper</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;kappa&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;initial_condition_dpsi&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;rotx&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;roty&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;rotz&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;loc&#39;</span><span class="p">)</span>
+        <span class="n">locnorm</span> <span class="o">=</span> <span class="n">LocnormComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;LocnormComp&#39;</span><span class="p">,</span> <span class="n">locnorm</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">rotnorm</span> <span class="o">=</span> <span class="n">RotnormComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;rotnormComp&#39;</span><span class="p">,</span> <span class="n">rotnorm</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+
+
+        <span class="sd">&#39;&#39;&#39;Constraints&#39;&#39;&#39;</span>
+        <span class="n">bccomp</span> <span class="o">=</span> <span class="n">BcComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">diametercomp</span> <span class="o">=</span> <span class="n">DiameterComp</span><span class="p">()</span>
+        <span class="n">tubeclearancecomp</span> <span class="o">=</span> <span class="n">TubeclearanceComp</span><span class="p">()</span>
+        <span class="n">tubestraightcomp</span> <span class="o">=</span> <span class="n">TubestraightComp</span><span class="p">()</span>
+        <span class="n">baseplanarcomp</span> <span class="o">=</span> <span class="n">BaseplanarComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">equ_paras</span><span class="o">=</span><span class="n">equ_paras</span><span class="p">)</span>
+        <span class="c1"># tiporientationcomp = TiporientationComp(k=k,tar_vector=tar_vector)</span>
+        <span class="n">deployedlenghtcomp</span> <span class="o">=</span> <span class="n">DeployedlengthComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">betacomp</span> <span class="o">=</span> <span class="n">BetaComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;BetaComp&#39;</span><span class="p">,</span> <span class="n">betacomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;BcComp&#39;</span><span class="p">,</span> <span class="n">bccomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;Baseplanarcomp&#39;</span><span class="p">,</span> <span class="n">baseplanarcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;DeployedlengthComp&#39;</span><span class="p">,</span> <span class="n">deployedlenghtcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;TubestraightComp&#39;</span><span class="p">,</span> <span class="n">tubestraightcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;DiameterComp&#39;</span><span class="p">,</span> <span class="n">diametercomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;TubeclearanceComp&#39;</span><span class="p">,</span> <span class="n">tubeclearancecomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="c1"># self.add_subsystem(&#39;TiporientationComp&#39;, tiporientationcomp, promotes=[&#39;*&#39;])</span>
+
+        <span class="c1">#strain</span>
+        <span class="n">num_t</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">ksconstraintscomp</span> <span class="o">=</span> <span class="n">KSConstraintsComp</span><span class="p">(</span>
+        <span class="n">in_name</span><span class="o">=</span><span class="s1">&#39;strain_virtual&#39;</span><span class="p">,</span>
+        <span class="n">out_name</span><span class="o">=</span><span class="s1">&#39;strain_max&#39;</span><span class="p">,</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">num_t</span><span class="p">,</span><span class="n">tube_nbr</span><span class="p">),</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">rho</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ksconstraintsmincomp</span> <span class="o">=</span> <span class="n">KSConstraintsMinComp</span><span class="p">(</span>
+        <span class="n">in_name</span><span class="o">=</span><span class="s1">&#39;strain_virtual&#39;</span><span class="p">,</span>
+        <span class="n">out_name</span><span class="o">=</span><span class="s1">&#39;strain_min&#39;</span><span class="p">,</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">num_t</span><span class="p">,</span><span class="n">tube_nbr</span><span class="p">),</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">rho</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">kappaeqcomp</span> <span class="o">=</span> <span class="n">KappaeqComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">gammacomp</span> <span class="o">=</span> <span class="n">GammaComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">chicomp</span> <span class="o">=</span> <span class="n">ChiComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_t</span> <span class="o">=</span> <span class="n">num_t</span><span class="p">)</span>
+        <span class="n">straincomp</span> <span class="o">=</span> <span class="n">StrainComp</span><span class="p">(</span><span class="n">num_nodes</span> <span class="o">=</span> <span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_t</span><span class="o">=</span> <span class="n">num_t</span><span class="p">)</span>
+        <span class="n">strainvirtualcomp</span> <span class="o">=</span> <span class="n">StrainvirtualComp</span><span class="p">(</span><span class="n">num_nodes</span> <span class="o">=</span> <span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_t</span><span class="o">=</span> <span class="n">num_t</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;KappaeqComp&#39;</span><span class="p">,</span> <span class="n">kappaeqcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;GammaComp&#39;</span><span class="p">,</span> <span class="n">gammacomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;ChiComp&#39;</span><span class="p">,</span> <span class="n">chicomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;StrainComp&#39;</span><span class="p">,</span> <span class="n">straincomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;StrainvirtualComp&#39;</span><span class="p">,</span> <span class="n">strainvirtualcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;KsconstraintsComp&#39;</span><span class="p">,</span> <span class="n">ksconstraintscomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;KsconstraintsminComp&#39;</span><span class="p">,</span> <span class="n">ksconstraintsmincomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;torsionconstraint&#39;</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="c1"># self.add_constraint(&#39;tiporientation&#39;, equals=0)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;locnorm&#39;</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># self.add_constraint(&#39;baseconstraints&#39;, lower=0)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;deployedlength12constraint&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;deployedlength23constraint&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;beta12constraint&#39;</span><span class="p">,</span> <span class="n">upper</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;beta23constraint&#39;</span><span class="p">,</span> <span class="n">upper</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">d_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;diameterconstraint&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="n">d_c</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;tubeclearanceconstraint&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="n">upper</span><span class="o">=</span><span class="mf">0.16</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;tubestraightconstraint&#39;</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;strain_max&#39;</span><span class="p">,</span><span class="n">upper</span><span class="o">=</span><span class="mf">0.08</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;strain_min&#39;</span><span class="p">,</span><span class="n">lower</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.08</span><span class="p">)</span>
+
+
+        <span class="sd">&#39;&#39;&#39;objectives&#39;&#39;&#39;</span>
+        <span class="n">desiredpointscomp</span> <span class="o">=</span> <span class="n">DesiredpointsComp</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;Desiredpointscomp&#39;</span><span class="p">,</span> <span class="n">desiredpointscomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">reachtargetptscomp</span> <span class="o">=</span> <span class="n">ReachtargetptsComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">targets</span> <span class="o">=</span> <span class="n">pt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;reachtargetptsComp&#39;</span><span class="p">,</span> <span class="n">reachtargetptscomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">targetnormcomp</span> <span class="o">=</span> <span class="n">TargetnormComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;Targetnormcomp&#39;</span><span class="p">,</span> <span class="n">targetnormcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">dpcomp</span> <span class="o">=</span> <span class="n">DpComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">p_</span><span class="o">=</span><span class="n">p_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;DpComp&#39;</span><span class="p">,</span> <span class="n">dpcomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">crosssectioncomp</span> <span class="o">=</span> <span class="n">CrosssectionComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;CrosssectionComp&#39;</span><span class="p">,</span> <span class="n">crosssectioncomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">signedfuncomp</span> <span class="o">=</span> <span class="n">SignedfunComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span><span class="n">normals</span><span class="o">=</span><span class="n">normals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;SignedfunComp&#39;</span><span class="p">,</span> <span class="n">signedfuncomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="n">equdply</span> <span class="o">=</span> <span class="n">EqudplyComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;EqudplyComp&#39;</span><span class="p">,</span> <span class="n">equdply</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+
+        <span class="c1"># objective function</span>
+        <span class="n">dl0</span> <span class="o">=</span> <span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;tube_section_length&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_guess</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span>
+        <span class="n">norm1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pt_full</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">-</span><span class="n">pt_full</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span><span class="nb">ord</span><span class="o">=</span><span class="mf">1.125</span><span class="p">)</span>
+        <span class="n">norm2</span> <span class="o">=</span> <span class="p">(</span><span class="n">dl0</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">dl0</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dl0</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>  <span class="n">dl0</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">norm3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pt_full</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">-</span><span class="n">pt_full</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span><span class="o">/</span><span class="n">viapts_nbr</span>
+        <span class="n">norm4</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">norm5</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">objscomp</span> <span class="o">=</span> <span class="n">ObjsComp</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span>
+                            <span class="n">zeta</span><span class="o">=</span><span class="n">zeta</span><span class="p">,</span>
+                                <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span>
+                                    <span class="n">eps_r</span><span class="o">=</span><span class="n">eps_r</span><span class="p">,</span>
+                                        <span class="n">eps_p</span><span class="o">=</span><span class="n">eps_p</span><span class="p">,</span>
+                                            <span class="n">lag</span><span class="o">=</span><span class="n">lag</span><span class="p">,</span>
+                                                <span class="n">norm1</span> <span class="o">=</span> <span class="n">norm1</span><span class="p">,</span>
+                                                    <span class="n">norm2</span> <span class="o">=</span> <span class="n">norm2</span><span class="p">,</span>
+                                                        <span class="n">norm3</span> <span class="o">=</span> <span class="n">norm3</span><span class="p">,</span>
+                                                            <span class="n">norm4</span> <span class="o">=</span> <span class="n">norm4</span><span class="p">,</span>
+                                                                <span class="n">norm5</span> <span class="o">=</span> <span class="n">norm5</span><span class="p">,</span>
+                                                                    <span class="n">eps_e</span> <span class="o">=</span> <span class="n">eps_e</span><span class="p">,)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;ObjsComp&#39;</span><span class="p">,</span> <span class="n">objscomp</span><span class="p">,</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="s1">&#39;objs&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After the group is built, we now can solve the path optimization problem by running the optimizer and function below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">pyOptSparseDriver</span>
+<span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">ScipyOptimizeDriver</span>
+<span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">pyOptSparseDriver</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">pyOptSparseDriver</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">pyOptSparseDriver</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="kn">from</span> <span class="nn">bspline_group</span> <span class="kn">import</span> <span class="n">BsplineGroup</span>
+<span class="kn">from</span> <span class="nn">bspline_3d_comp</span> <span class="kn">import</span> <span class="n">BsplineComp</span>
+
+<span class="c1"># Initialize the number of control points and path points</span>
+<span class="n">num_cp</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">num_pt</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="s1">&#39;heart04&#39;</span>
+<span class="c1"># Define the start point and final point (target)</span>
+<span class="n">sp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">23</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">85</span><span class="p">])</span>
+<span class="n">fp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">87</span><span class="p">,</span><span class="o">-</span><span class="mi">27</span><span class="p">,</span><span class="o">-</span><span class="mi">193</span><span class="p">])</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">r1</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># mesh .PLY file</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;/mesh.ply&#39;</span>
+
+<span class="n">prob</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">BsplineGroup</span><span class="p">(</span><span class="n">num_cp</span><span class="o">=</span><span class="n">num_cp</span><span class="p">,</span><span class="n">num_pt</span><span class="o">=</span><span class="n">num_pt</span><span class="p">,</span>
+                                    <span class="n">sp</span><span class="o">=</span><span class="n">sp</span><span class="p">,</span><span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span>
+                                        <span class="n">r2</span><span class="o">=</span><span class="n">r2</span><span class="p">,</span><span class="n">r1</span><span class="o">=</span><span class="n">r1</span><span class="p">,</span>
+                                            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">pyOptSparseDriver</span><span class="p">()</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SNOPT&#39;</span>
+<span class="c1"># prob.driver.opt_settings[&#39;Verify level&#39;] = 0</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;Major iterations limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;Minor iterations limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;Iterations limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000000</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;Major step limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">run_model</span><span class="p">()</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">run_driver</span><span class="p">()</span>
+
+
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Path points&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">prob</span><span class="p">[</span><span class="s1">&#39;pt&#39;</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Control points&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">prob</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="simultaneous_optimization.html" class="btn btn-neutral float-right" title="Step 3 : Simultaneous optimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="path_optimization.html" class="btn btn-neutral float-left" title="Step 1: Path optimization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Morimoto Lab, UCSD.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
