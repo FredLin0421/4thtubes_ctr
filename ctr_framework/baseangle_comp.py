@@ -116,7 +116,7 @@ if __name__ == '__main__':
     comp.add_output('p', val=np.random.random((n,k,3,1)))
     comp.add_output('rotx', val = 3.7 )
     comp.add_output('roty', val= -0.1 )
-    comp.add_output('rotz', val= -0.2 )
+    comp.add_output('rotz', val= -2 )
     
 
     
@@ -131,10 +131,9 @@ if __name__ == '__main__':
     
     prob.setup()
     prob.run_model()
-    print('p',prob['p'])
     print('rot',prob['rot'])
     prob.model.list_outputs()
 
     # prob.check_partials(compact_print=True)
-    prob.check_partials(compact_print=False)
+    # prob.check_partials(compact_print=False)
     prob.check_partials(compact_print=True)

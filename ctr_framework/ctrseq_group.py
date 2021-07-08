@@ -69,6 +69,10 @@ from ctr_framework.crosssection_comp import CrosssectionComp
 from ctr_framework.signedfun_comp import SignedfunComp
 'mesh'
 from ctr_framework.mesh import trianglemesh
+'end-effector'
+from tippose_comp import TipposeComp
+from tiptransformation_comp import TiptransformationComp
+from rotee_comp import RoteeComp
 
 
 class CtrseqGroup(om.Group):
@@ -247,7 +251,7 @@ class CtrseqGroup(om.Group):
         'ODE 3: Position'
         ode_function3 = BackboneptsFunction(k=1)
         formulation3 = 'time-marching'
-
+        
         initial_time = 0.
         normalized_times = np.linspace(0., 1, num_nodes)
         initial_conditions = { 'p': np.zeros((k,3,1))
@@ -264,10 +268,18 @@ class CtrseqGroup(om.Group):
         self.connect('integrator_group3.state:p','p')
 
         'Transformation'
+
         baseanglecomp = BaseangleComp(k=k,num_nodes=num_nodes,rotx_init=rotx_init,roty_init=roty_init,rotz_init=rotz_init)
         self.add_subsystem('BaseangleComp', baseanglecomp, promotes=['*'])
         rotpcomp = RotpComp(k=k,num_nodes=num_nodes,base=base)
         self.add_subsystem('RotpComp', rotpcomp, promotes=['*'])
+
+        tiposecomp = TipposeComp(k=k,num_nodes=num_nodes,base=base)
+        self.add_subsystem('TipposeComp', tiposecomp, promotes=['*'])
+        tiptransformationcomp = TiptransformationComp(k=k,num_nodes=num_nodes,base=base)
+        self.add_subsystem('TiptransformationComp', tiptransformationcomp, promotes=['*'])
+        Roteecomp = RoteeComp(k=k,num_nodes=num_nodes,base=base)
+        self.add_subsystem('RoteeComp', Roteecomp, promotes=['*'])
 
 
 
@@ -297,7 +309,6 @@ class CtrseqGroup(om.Group):
         self.add_subsystem('LocnormComp', locnorm, promotes=['*'])
         rotnorm = RotnormComp(k=k)                                
         self.add_subsystem('rotnormComp', rotnorm, promotes=['*'])
-
 
         '''Constraints'''
         bccomp = BcComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
@@ -357,9 +368,9 @@ class CtrseqGroup(om.Group):
         self.add_constraint('deployedlength23constraint', lower=5)
         self.add_constraint('deployedlength34constraint', lower=5)
         # self.add_constraint('deployedlength', lower=10)
-        self.add_constraint('beta12constraint', upper=-1)
-        self.add_constraint('beta23constraint', upper=-1)
-        self.add_constraint('beta34constraint', upper=-1)
+        # self.add_constraint('beta12constraint', upper=-1)
+        # self.add_constraint('beta23constraint', upper=-1)
+        # self.add_constraint('beta34constraint', upper=-1)
         d_c = np.zeros((1,tube_nbr)) + 0.1
         self.add_constraint('diameterconstraint',lower= d_c)
         # self.add_constraint('tubeclearanceconstraint',lower= 0.1,upper=0.16)

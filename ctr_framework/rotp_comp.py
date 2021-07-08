@@ -24,6 +24,7 @@ class RotpComp(ExplicitComponent):
         self.add_input('loc',shape=(3,1))
         # outputs
         self.add_output('rot_p',shape=(num_nodes,k,3,1))
+        self.add_output('T',shape=(4,4))
         
         
         row_indices_p = np.outer(np.arange(num_nodes*k*3),np.ones(3)).flatten()
@@ -37,6 +38,8 @@ class RotpComp(ExplicitComponent):
         col_indices_l = np.outer(np.ones(num_nodes*k),np.outer(np.ones(1),np.array([0,1,2])).flatten()).flatten()
         row_indices_l = np.arange(num_nodes*k*3).flatten()       
         self.declare_partials('rot_p', 'loc',rows=row_indices_l.flatten(),cols=col_indices_l)
+        self.declare_partials('T', 'rot')
+        self.declare_partials('T', 'loc')
        
         
     def compute(self,inputs,outputs):
@@ -56,9 +59,10 @@ class RotpComp(ExplicitComponent):
         p_h = np.zeros((num_nodes,k,4,1))
         p_h[:,:,:3,:] = p
         p_h[:,:,3,:] = 1
-
+        self.T = T
         rot_p = T @ p_h
         outputs['rot_p'] = rot_p[:,:,:3,:]
+        outputs['T'] = T 
         
         
 
@@ -69,6 +73,8 @@ class RotpComp(ExplicitComponent):
         k = self.options['k']
         p = inputs['p']
         rot = inputs['rot']
+        rot = inputs['loc']
+        T = self.T
         
         '''Computing Partials'''
         pd_pp = np.zeros((num_nodes,k,3,3))
@@ -80,20 +86,26 @@ class RotpComp(ExplicitComponent):
         pd_pt[:,:,1,:] = p
         pd_pt[:,:,2,:] = p
 
+        pt_pl = np.zeros((4*4,3))
+        pt_pl[[3,7,11],[0,1,2]] = 1
+        pt_pr = np.zeros((4*4,3*3))
+        pt_pr[[0,1,2,4,5,6,8,9,10],np.arange(9)] = 1
+
 
         partials['rot_p','p'][:]= pd_pp.flatten()
         partials['rot_p','rot'][:]= pd_pt.flatten()
         partials['rot_p','loc'][:]= 1
+        partials['T','rot'][:]= pt_pr
+        partials['T','loc'][:]= pt_pl
 
 if __name__ == '__main__':
     
     from openmdao.api import Problem, Group
-    
     from openmdao.api import IndepVarComp
     
     group = Group()
-    n=20
-    k=3
+    n=100
+    k=1
     comp = IndepVarComp()
     comp.add_output('p', val=np.random.random((n,k,3,1)))
     comp.add_output('rot', val = np.identity(3))
@@ -112,5 +124,5 @@ if __name__ == '__main__':
     prob.run_model()
     prob.model.list_outputs()
 
-    prob.check_partials(compact_print=True)
-    # prob.check_partials(compact_print=False)
+    # prob.check_partials(compact_print=True)
+    prob.check_partials(compact_print=False)
