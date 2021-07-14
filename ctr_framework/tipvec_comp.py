@@ -23,7 +23,7 @@ class TipvecComp(ExplicitComponent):
 
         # outputs
         self.add_output('tipvec',shape=(k,3))
-        self.add_output('norm',shape=(k))
+        self.add_output('norm',shape=(k,1))
         
         row_indices = np.outer(np.arange(k*3),np.ones(tube_nbr)).flatten()
         col_indices = np.outer(np.ones(k),np.outer(np.ones(3),np.arange(tube_nbr)).flatten()) + (np.arange(0,k*tube_nbr,tube_nbr).reshape(-1,1))
@@ -57,7 +57,7 @@ class TipvecComp(ExplicitComponent):
         interpolation_val[:,:] = vec 
         
         
-        outputs['norm'] = norm
+        outputs['norm'] = norm.reshape(-1,1)
         outputs['tipvec'] = interpolation_val
 
 
@@ -92,11 +92,11 @@ if __name__ == '__main__':
     from openmdao.api import IndepVarComp
     
     group = Group()
-    n=4
-    k=3
+    n=50
+    k=1
     comp = IndepVarComp()
     comp.add_output('rot_p', val=np.random.random((n,k,3,1)))
-    comp.add_output('tube_ends_tip', val=([3.9,3,2,1],[3.3,3,2,1],[3.3,3,2,1]))
+    comp.add_output('tube_ends_tip', val=(3.9,3,2.5,1))
     
 
     
@@ -113,5 +113,5 @@ if __name__ == '__main__':
     prob.run_model()
     prob.model.list_outputs()
 
-    # prob.check_partials(compact_print=True)
-    prob.check_partials(compact_print=False)
+    prob.check_partials(compact_print=True)
+    #prob.check_partials(compact_print=False)

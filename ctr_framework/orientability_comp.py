@@ -19,12 +19,13 @@ class OrientabilityComp(ExplicitComponent):
         self.add_input('norm_tipvec',shape=(k,3))
 
         # outputs
-        self.add_output('orientability',shape=(k))
+        # self.add_output('orientability',shape=(k))
+        self.add_output('orientability')
         
         row_indices = np.outer(np.arange(k),np.ones(3)).flatten()
         col_indices = np.arange(k*3)
         
-        self.declare_partials('orientability', 'norm_tipvec',rows=row_indices,cols=col_indices)
+        self.declare_partials('orientability', 'norm_tipvec')#,rows=row_indices,cols=col_indices)
         
 
        
@@ -36,8 +37,8 @@ class OrientabilityComp(ExplicitComponent):
         norm_tipvec = inputs['norm_tipvec']
         
         norm = np.linalg.norm(des_vector - norm_tipvec,axis=1)
-        
-        outputs['orientability'] = norm
+        # norm = (des_vector-norm_tipvec)**2
+        outputs['orientability'] = np.sum(norm)
 
 
     def compute_partials(self,inputs,partials):
@@ -54,7 +55,11 @@ class OrientabilityComp(ExplicitComponent):
         pt_pt[:,0] = -(((sumdpsi)**-0.5) * sum_[:,0])
         pt_pt[:,1] = -(((sumdpsi)**-0.5) * sum_[:,1])
         pt_pt[:,2] = -(((sumdpsi)**-0.5) * sum_[:,2])
-        partials['orientability','norm_tipvec'][:] = pt_pt.flatten()
+        # pt_pt[:,0] = -2 * sum_[:,0]
+        # pt_pt[:,1] = -2 * sum_[:,1]
+        # pt_pt[:,2] = -2 * sum_[:,2]
+        # partials['orientability','norm_tipvec'][:] = pt_pt.flatten()
+        partials['orientability','norm_tipvec'][:] = pt_pt.reshape(1,-1)
 
 if __name__ == '__main__':
     
@@ -64,7 +69,7 @@ if __name__ == '__main__':
     
     group = Group()
     n=1
-    k=10
+    k=2
     tar_vector = np.random.rand(k,3)
     comp = IndepVarComp()
     comp.add_output('desptsconstraints', val=np.random.random((k,3)))

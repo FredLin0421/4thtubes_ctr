@@ -13,35 +13,41 @@
  
 
  Nonlinear constraints      15     Linear constraints       0
- Nonlinear variables        10     Linear variables         0
- Jacobian  variables        10     Objective variables     10
- Total constraints          15     Total variables         10
+ Nonlinear variables        25     Linear variables         0
+ Jacobian  variables        25     Objective variables     25
+ Total constraints          15     Total variables         25
  
 
  
- The user has defined      49   out of      49   constraint gradients.
- The user has defined      10   out of      10   objective  gradients.
+ The user has defined     166   out of     166   constraint gradients.
+ The user has defined      25   out of      25   objective  gradients.
  
 
  Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
-     0      6               1 (9.2E-05) 9.6E-03 -1.1239775E+01     6           r
-     1      1  1.0E+00      2 (3.1E-11) 9.2E-03 -1.3693002E+01     6         n r
-     2      7  1.0E+00      3 (2.4E-10) 1.9E+00 -1.4333689E+01     3         s
-     3      2  1.1E-03      7 (8.6E-09) 1.6E+00 -1.5316361E+01     3
-     4      2  2.1E-03     11 (3.7E-09) 5.7E-01 -1.6162968E+01     3
-     5      4  8.8E-04     17 (3.6E-09) 2.6E-01 -1.6519159E+01     4
-     6     10  1.1E-01     20 (2.6E-09) 1.3E+00 -1.6640881E+01     4
-     7     10  2.4E-03     28 (2.6E-09) 3.7E-01 -1.7471055E+01     5
-     8      5  2.3E-04     38 (2.6E-09) 3.1E-01 -1.7472472E+01     5
-     8      7              46 (2.6E-09) 2.4E-02 -1.7472472E+01     6           r
-     9      4  4.5E-02     57 (2.5E-09) 3.0E-02 -1.7896204E+01     3         sM
+     0     18               1 (2.2E-05) 7.9E-01  2.8036367E+00    16           r
+     1      3  2.4E-03      4 (2.2E-05) 1.7E-01  2.8007770E+00    15         n r
+     2      4  3.4E-02      6 (2.1E-05) 9.0E-01  2.7983237E+00    18         s
+     3      1  8.5E-02      8 (1.9E-05) 1.0E+00  2.7972026E+00    18
+     4      1  2.5E-01     10 (1.4E-05) 6.1E-01  2.7927496E+00    18
+     5      2  2.2E-01     12 (1.1E-05) 5.3E-01  2.8171712E+00    17 1.5E+03
+     6      2  1.0E+00     14 (1.5E-06) 9.6E-01  2.7794185E+00    18 2.4E+03  M
+     7      1  1.0E+00     16 (7.4E-09) 1.0E+00  2.7898037E+00    18 7.3E+04  M
+     8      2  1.0E+00     17 (8.5E-09) 4.1E-01  2.7888118E+00    17 2.7E+02
+     9      2  1.0E+00     18 (1.2E-08) 5.1E-01  2.7859856E+00    16 2.5E+01
 
  Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
-    10      7  1.7E-04     67 (2.5E-09) 1.2E+00 -1.7923166E+01     5
+    10      2  1.0E+00     19 (6.9E-09) 7.5E-01  2.7800584E+00    17 9.9E+00
+    11      4  1.0E+00     20 (6.4E-10) 1.1E+00  2.7557356E+00    16 9.9E+00
+    12      3  1.0E+00     21 (1.1E-08) 9.4E-01  2.7042501E+00    14 9.9E+00
+    13      3  1.0E+00     23 (2.9E-06) 1.9E-01 -2.1190692E-01    14 9.9E+00 n
+    14      3  1.0E+00     24 (6.8E-06) 1.5E+00 -1.2333286E+00    16 9.9E+00
+    15      5  3.8E-02     28 (6.1E-06) 8.1E-01 -1.2349273E+00    17 9.9E+00
+    16      3  2.6E-01     33 (4.8E-06) 2.1E+01 -1.3702384E+00    16 9.9E+00
+    17      1  2.3E-12     42 (4.8E-06) 2.1E+01 -1.3702384E+00    16 9.9E+00 n
+    17      7              50 (4.8E-06) 1.6E-02 -1.3702454E+00    13         n r
+    18      8  3.1E-01     52 (2.1E-06) 2.2E+00 -1.3746598E+00    17         s
+    19     15  1.5E-01     56  1.0E-04  8.5E-01 -3.1715875E+00    17
 
  Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
-    10      9              74 (2.5E-09) 2.5E-02 -1.7923166E+01     6           r
-    11      2  1.1E-05     84 (2.5E-09) 1.1E+00 -1.7923229E+01     5         s
-    12      2  2.3E-08     94 (2.5E-09) 9.0E-01 -1.7923230E+01     6
-    13      2  3.5E-08    104 (2.5E-09) 7.3E-01 -1.7923230E+01     5
-    14      1  7.9E-09    115 (2.5E-09) 7.3E-01 -1.7923230E+01     5         n
+    20      3  9.5E-02     66 (6.2E-05) 6.7E+00 -1.8924629E+00    15 1.7E+03
+    21      1  9.3E-11     73 (6.2E-05) 6.7E+00 -1.8915419E+00    15 1.7E+03 n

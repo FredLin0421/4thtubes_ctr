@@ -69,7 +69,7 @@ if __name__ == '__main__':
     
     group = Group()
     n=4
-    k=5
+    k=10
     comp = IndepVarComp()
     comp.add_output('tippos', val=np.random.random((k,3,1)))
     comp.add_output('tipori', val=np.random.random((k,3,3)))

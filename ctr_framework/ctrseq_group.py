@@ -70,9 +70,14 @@ from ctr_framework.signedfun_comp import SignedfunComp
 'mesh'
 from ctr_framework.mesh import trianglemesh
 'end-effector'
-from tippose_comp import TipposeComp
-from tiptransformation_comp import TiptransformationComp
-from rotee_comp import RoteeComp
+from ctr_framework.tippose_comp import TipposeComp
+from ctr_framework.tiptransformation_comp import TiptransformationComp
+from ctr_framework.endeffector_comp import EndeffectorComp
+from ctr_framework.rotee_comp import RoteeComp
+'orientability'
+from ctr_framework.tipvec_comp import TipvecComp
+from ctr_framework.normtipvec_comp import NormtipvecComp
+from ctr_framework.orientability_comp import OrientabilityComp
 
 
 class CtrseqGroup(om.Group):
@@ -101,6 +106,7 @@ class CtrseqGroup(om.Group):
         self.options.declare('pt_full')
         self.options.declare('viapts_nbr')
         self.options.declare('meshfile')
+        self.options.declare('des_vector')
         
         
 
@@ -129,17 +135,18 @@ class CtrseqGroup(om.Group):
         pt_full = self.options['pt_full']
         viapts_nbr = self.options['viapts_nbr']
         meshfile = self.options['meshfile']
+        des_vector = self.options['des_vector']
         # mesh processing
         mesh  = trianglemesh(num_nodes,k,pt_test,center,meshfile)  
         p_ = mesh.p
         normals = mesh.normals
         
         
-        if i == 9:
+        if i == 0:
             init_guess = scipy.io.loadmat('initial.mat')
 
         else:
-            init_guess = scipy.io.loadmat('seq_r1'+str(i-1)+'.mat')
+            init_guess = scipy.io.loadmat('seq_ot1'+str(i-1)+'.mat')
             
         
         
@@ -247,7 +254,7 @@ class CtrseqGroup(om.Group):
         self.connect('final_time', 'integrator_group2.final_time')
         self.connect('uhat', 'integrator_group2.dynamic_parameter:uhat')
         self.connect('initial_condition_R', 'integrator_group2.initial_condition:R')
-
+        self.connect('integrator_group2.state:R','R')
         'ODE 3: Position'
         ode_function3 = BackboneptsFunction(k=1)
         formulation3 = 'time-marching'
@@ -274,32 +281,34 @@ class CtrseqGroup(om.Group):
         rotpcomp = RotpComp(k=k,num_nodes=num_nodes,base=base)
         self.add_subsystem('RotpComp', rotpcomp, promotes=['*'])
 
-        tiposecomp = TipposeComp(k=k,num_nodes=num_nodes,base=base)
+        tiposecomp = TipposeComp(k=k,num_nodes=num_nodes,tube_nbr=tube_nbr)
         self.add_subsystem('TipposeComp', tiposecomp, promotes=['*'])
-        tiptransformationcomp = TiptransformationComp(k=k,num_nodes=num_nodes,base=base)
+        tiptransformationcomp = TiptransformationComp(k=k,num_nodes=num_nodes)
         self.add_subsystem('TiptransformationComp', tiptransformationcomp, promotes=['*'])
-        Roteecomp = RoteeComp(k=k,num_nodes=num_nodes,base=base)
+        endeffectorcomp = EndeffectorComp(k=k,num_nodes=num_nodes,ee_length=5)
+        self.add_subsystem('EndeffectorComp', endeffectorcomp, promotes=['*'])
+        Roteecomp = RoteeComp(k=k,num_nodes=num_nodes)
         self.add_subsystem('RoteeComp', Roteecomp, promotes=['*'])
 
 
 
         "Deisgn variables"
-        # self.add_design_var('d1',lower= 0.2 , upper=3.5)
-        # self.add_design_var('d2',lower= 0.2, upper=3.5)
-        # self.add_design_var('d3',lower= 0.2, upper=3.5)
-        # self.add_design_var('d4',lower= 0.2, upper=3.5)
-        # self.add_design_var('d5',lower= 0.2, upper=3.5)
-        # self.add_design_var('d6',lower= 0.2, upper=3.5)
+        self.add_design_var('d1',lower= 0.2 , upper=3.5)
+        self.add_design_var('d2',lower= 0.2, upper=3.5)
+        self.add_design_var('d3',lower= 0.2, upper=3.5)
+        self.add_design_var('d4',lower= 0.2, upper=3.5)
+        self.add_design_var('d5',lower= 0.2, upper=3.5)
+        self.add_design_var('d6',lower= 0.2, upper=3.5)
         # self.add_design_var('d7',lower= 0.2, upper=3.5)
         # self.add_design_var('d8',lower= 0.2, upper=3.5)
         tube_length_init = 0
         tube_straight_init = 0
-        # self.add_design_var('tube_section_length',lower=20,indices=[0,1,2])
-        # self.add_design_var('tube_section_straight',lower=15,indices=[0,1,2])
+        self.add_design_var('tube_section_length',lower=20,indices=[0,1,2])
+        self.add_design_var('tube_section_straight',lower=15,indices=[0,1,2])
         self.add_design_var('alpha',indices=[0,1,2])
         # temp = np.outer(np.ones(k) , -init_guess['tube_section_length']+ 2)
         self.add_design_var('beta',upper=-1,indices=[0,1,2])
-        # self.add_design_var('kappa', lower=[0.01,0,0,0],upper=1)
+        self.add_design_var('kappa', lower=[0.01,0,0],upper=1,indices=[0,1,2])
         self.add_design_var('initial_condition_dpsi')
         # self.add_design_var('rotx')
         # self.add_design_var('roty')
@@ -380,8 +389,8 @@ class CtrseqGroup(om.Group):
         
         
         '''objectives'''
-        desiredpointscomp = DesiredpointsComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
-        self.add_subsystem('Desiredpointscomp', desiredpointscomp, promotes=['*'])
+        # desiredpointscomp = DesiredpointsComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
+        # self.add_subsystem('Desiredpointscomp', desiredpointscomp, promotes=['*'])
         reachtargetptscomp = ReachtargetptsComp(k=k,targets = pt)
         self.add_subsystem('reachtargetptsComp', reachtargetptscomp, promotes=['*'])
         targetnormcomp = TargetnormComp(k=k)
@@ -395,13 +404,26 @@ class CtrseqGroup(om.Group):
         equdply = EqudplyComp(k=k,num_nodes=num_nodes,tube_nbr=tube_nbr)
         self.add_subsystem('EqudplyComp', equdply, promotes=['*'])
 
+        # orientability
+        tipveccomp = TipvecComp(k=k,tube_nbr=tube_nbr,num_nodes=num_nodes)
+        self.add_subsystem('TipvecComp', tipveccomp, promotes=['*'])
+        normtipveccomp = NormtipvecComp(k=k,tube_nbr=tube_nbr,num_nodes=num_nodes)
+        self.add_subsystem('Normtipveccomp', normtipveccomp, promotes=['*'])
+        orientabilitycomp = OrientabilityComp(k=k,num_nodes=num_nodes,des_vector=des_vector)
+        self.add_subsystem('OrientabilityComp', orientabilitycomp, promotes=['*'])
+
         # objective function
         dl0 = init_guess['tube_section_length'] + init_guess['beta']
         norm1 = np.linalg.norm(pt_full[0,:]-pt_full[-1,:],ord=1.125)
         norm2 = (dl0[:,0] - dl0[:,1])**2 + (dl0[:,1] -  dl0[:,2])**2
         norm3 = np.linalg.norm(pt_full[0,:]-pt_full[-1,:])/viapts_nbr
         norm4 = 2
-        norm5 = 2*np.pi 
+        norm5 = 2*np.pi
+        if  i < viapts_nbr:
+            eps_o = 0
+        else:
+            eps_o = 10
+
         objscomp = ObjsComp(k=k,num_nodes=num_nodes,
                             zeta=zeta,
                                 rho=rho,
@@ -413,7 +435,8 @@ class CtrseqGroup(om.Group):
                                                         norm3 = norm3,
                                                             norm4 = norm4,
                                                                 norm5 = norm5,
-                                                                    eps_e = eps_e,)                                    
+                                                                    eps_e = eps_e,
+                                                                        eps_o = eps_o)                                    
         self.add_subsystem('ObjsComp', objscomp, promotes=['*'])
         self.add_objective('objs')
         

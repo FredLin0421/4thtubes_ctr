@@ -18,18 +18,18 @@ class RoteeComp(ExplicitComponent):
         tube_nbr = self.options['tube_nbr']
 
         #Inputs
-        self.add_input('tip_trans',shape=(k,4,4))
+        self.add_input('Tee',shape=(k,4,4))
         self.add_input('T',shape=(4,4))
 
         # outputs
-        self.add_output('rotee',shape=(k,3))
+        self.add_output('desptsconstraints',shape=(k,3))
         
         row_indices1 = np.outer(np.arange(k*3),np.ones(4)).flatten()
         col_indices1 = np.tile(np.arange(4*3),k).flatten()
         add = np.arange(k) * 16
         col_indices2 = np.outer(np.ones(k),np.tile([3,7,11,15],3)) + add[:,np.newaxis]
-        self.declare_partials('rotee', 'tip_trans',rows=row_indices1,cols=col_indices2.flatten())
-        self.declare_partials('rotee', 'T',rows=row_indices1,cols=col_indices1)
+        self.declare_partials('desptsconstraints', 'Tee',rows=row_indices1,cols=col_indices2.flatten())
+        self.declare_partials('desptsconstraints', 'T',rows=row_indices1,cols=col_indices1)
 
        
         
@@ -37,27 +37,27 @@ class RoteeComp(ExplicitComponent):
 
         k = self.options['k']
         num_nodes= self.options['num_nodes']
-        tip_trans = inputs['tip_trans']
+        Tee = inputs['Tee']
         T = inputs['T']
         
         
-        ee = T @ tip_trans
-        outputs['rotee'] = ee[:,:3,3] 
+        ee = T @ Tee
+        outputs['desptsconstraints'] = ee[:,:3,3] 
 
 
     def compute_partials(self,inputs,partials):
         """ partials Jacobian of partial derivatives."""
         num_nodes = self.options['num_nodes']
         tube_nbr = self.options['tube_nbr']
-        tip_trans = inputs['tip_trans']
+        Tee = inputs['Tee']
         T = inputs['T']
         k = self.options['k']
         '''Computing Partials'''
         
         pe_pt = np.zeros((k,3,4))
-        pe_pt[:,0,:] = tip_trans[:,:,3]
-        pe_pt[:,1,:] = tip_trans[:,:,3]
-        pe_pt[:,2,:] = tip_trans[:,:,3]
+        pe_pt[:,0,:] = Tee[:,:,3]
+        pe_pt[:,1,:] = Tee[:,:,3]
+        pe_pt[:,2,:] = Tee[:,:,3]
 
         pt_pt = np.zeros((k,3,4))
         pt_pt[:,0,:] = T[0,:]
@@ -66,8 +66,8 @@ class RoteeComp(ExplicitComponent):
         
 
 
-        partials['rotee','tip_trans'][:] = pt_pt.flatten()
-        partials['rotee','T'][:] = pe_pt.flatten()
+        partials['desptsconstraints','Tee'][:] = pt_pt.flatten()
+        partials['desptsconstraints','T'][:] = pe_pt.flatten()
         
 
 if __name__ == '__main__':
@@ -78,9 +78,9 @@ if __name__ == '__main__':
     
     group = Group()
     n=4
-    k=10
+    k=13
     comp = IndepVarComp()
-    comp.add_output('tip_trans', val=np.random.random((k,4,4)))
+    comp.add_output('Tee', val=np.random.random((k,4,4)))
     comp.add_output('T', val=np.random.random((4,4)))
     
 

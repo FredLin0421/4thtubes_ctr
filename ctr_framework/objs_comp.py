@@ -13,6 +13,7 @@ class ObjsComp(ExplicitComponent):
         self.options.declare('rho')
         self.options.declare('eps_r')
         self.options.declare('eps_p')
+        self.options.declare('eps_o')
         self.options.declare('lag')
         self.options.declare('eps_e')
         self.options.declare('norm1')
@@ -37,6 +38,7 @@ class ObjsComp(ExplicitComponent):
         self.add_input('equ_deploylength')
         self.add_input('locnorm')
         self.add_input('rotnorm')
+        self.add_input('orientability')
         # outputs
         self.add_output('objs')
 
@@ -48,6 +50,7 @@ class ObjsComp(ExplicitComponent):
         self.declare_partials('objs', 'targetnorm')
         self.declare_partials('objs', 'equ_deploylength')
         self.declare_partials('objs', 'locnorm')
+        self.declare_partials('objs', 'orientability')
         
         
 
@@ -63,6 +66,7 @@ class ObjsComp(ExplicitComponent):
         rho = self.options['rho']
         eps_r = self.options['eps_r']
         eps_p = self.options['eps_p']
+        eps_o = self.options['eps_o']
         lag = self.options['lag']
         eps_e = self.options['eps_e']
         norm1 = self.options['norm1']
@@ -75,16 +79,15 @@ class ObjsComp(ExplicitComponent):
         locnorm = inputs['locnorm']
         rotnorm = inputs['rotnorm']
         targetnorm = inputs['targetnorm']
-
+        orientability = inputs['orientability']
         magnitude = np.sum(zeta * obj1 / norm1)\
                     + eps_e * equ_deploylength / norm2 \
                         + np.sum(0.5 * rho * targetnorm**2 / (norm3**2)) \
                             + np.sum(lag * targetnorm/(norm3)) \
                                 + eps_p * locnorm/(norm4) \
                                     + eps_r * rotnorm/(norm5) \
+                                        + eps_o*orientability \
         
-        
-    
         outputs['objs'] = magnitude.squeeze()
 
 
@@ -100,6 +103,7 @@ class ObjsComp(ExplicitComponent):
         eps_e = self.options['eps_e']
         eps_r = self.options['eps_r']
         eps_p = self.options['eps_p']
+        eps_o = self.options['eps_o']
         norm1 = self.options['norm1']
         norm2 = self.options['norm2']
         norm3 = self.options['norm3']
@@ -113,6 +117,7 @@ class ObjsComp(ExplicitComponent):
         partials['objs','equ_deploylength'][:] = eps_e/ norm2
         partials['objs','locnorm'][:] = eps_p/norm4
         partials['objs','rotnorm'][:] = eps_r/norm5
+        partials['objs','orientability'][:] = eps_o
 
 
 if __name__ == '__main__':
@@ -138,6 +143,7 @@ if __name__ == '__main__':
     comp.add_output('locnorm', val = 8.8)
     comp.add_output('relativeang', val = 8.8)
     comp.add_output('equ_deploylength', val = 8.8)
+    comp.add_output('orientability', val = 5)
     
     
 
@@ -146,7 +152,8 @@ if __name__ == '__main__':
     group.add_subsystem('IndepVarComp', comp, promotes = ['*'])
     
     
-    comp = ObjsComp(k=k,num_nodes=n,rho = rho,zeta = np.ones((k,1)),eps_r = gamma3,eps_p=gamma4,lag=rho,norm1 = 1,norm2=0.5,norm3=0.74,norm4=1.99,norm5=0.77,eps_e=zeta )
+    comp = ObjsComp(k=k,num_nodes=n,rho = rho,zeta = np.ones((k,1)),eps_r = gamma3,eps_p=gamma4,lag=rho,norm1 = 1,\
+                                norm2=0.5,norm3=0.74,norm4=1.99,norm5=0.77,eps_e=zeta,eps_o=5 )
     group.add_subsystem('testcomp', comp, promotes = ['*'])
     
     prob = Problem()

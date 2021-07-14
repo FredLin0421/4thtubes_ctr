@@ -23,12 +23,13 @@ from ctr_framework.design_method.seq_opt import seq_opt
 ############## initialization ###########
 #########################################
 
-for j in range(30):
+for j in range(1):
     # number of waypoints
-    viapts_nbr= 10
+    viapts_nbr= 5
+    orient_nbr = 3
     k = 1
     # number of links                              
-    num_nodes = 50 * 3
+    num_nodes = 50 * 2
     # number of tubes
     tube_nbr = 4
 
@@ -46,27 +47,22 @@ for j in range(30):
     d7 = 2.2 
     d8 = 2.7
     # Tube curvature (kappa)
-    kappa_init = np.array([0.051, 0.0031,0.0041,0.01]).reshape((1,tube_nbr))
+    kappa_init = np.array([0.031, 0.0031,0.0041,0.01]).reshape((1,tube_nbr))
     # The length of tubes
     tube_length_init = np.array([310, 250,150,65]).reshape((1,tube_nbr))
     # The length of straight section of tubes
-    tube_straight_init = np.array([295, 230,100,15]).reshape((1,tube_nbr))
+    tube_straight_init = np.array([300, 230,100,15]).reshape((1,tube_nbr))
     # joint variables
     alpha_init = np.zeros((k,tube_nbr))
-    alpha_init[:,0] = np.pi/2 - 1.57 #ftL1
-    # alpha_init[:,0] = -np.pi/2 - 1.57+1.5 #ftc2
-    # alpha_init[:,0] = -np.pi/2 - 1.57-0.4 #ftr
-
-    alpha_init[:,1] = -np.pi/2 - 1.57 #ftc1
-    # alpha_init[:,1] = np.pi/2 - 1.57-0.3 #ftc2
+    alpha_init[:,0] = -np.pi/2 - 1.57
+    alpha_init[:,1] = np.pi/4 - 1.57
     alpha_init[:,2] = -np.pi/2 -1.57
     alpha_init[:,3] = -np.pi/2 -1.57
-    if j>0:
-        alpha_init = alpha_init + np.random.random((k,tube_nbr)) * (-1)**j
+    #alpha_init = beta_init + 2 * np.random.random((k,tube_nbr)) * (-1)
     beta_init = np.zeros((k,tube_nbr))
-    beta_init[:,0] = -91
-    beta_init[:,1] = -110
-    beta_init[:,2] = -65
+    beta_init[:,0] = -260
+    beta_init[:,1] = -205
+    beta_init[:,2] = -110
     beta_init[:,3] = -30
     # beta_init = beta_init + 2 * np.random.random((k,tube_nbr)) * (-1)
     # initial torsion 
@@ -96,11 +92,15 @@ for j in range(30):
     # rot = np.array([0,0,0]).reshape((3,1))  
     base = np.array([-3,15,-40]).reshape((3,1))
     rot = np.array([0.39,0,0]).reshape((3,1))  
-
+    
     # mesh .PLY file
     meshfile = 'laryngoscopemm_52225.ply'
     pathfile = 'pathr.mat'
+    des_vector = np.zeros((3,3))
+    # vec = np.array([[0,-1,1],[0,-0.5,1],[0,0,1],[0,0.5,1],[0,1,1]])
+    vec = np.array([[0,1,1],[0,-1,1],[0,0,1]])
+    des_vector[:,:] = vec / np.linalg.norm(vec)
 
-    seq_opt(num_nodes,viapts_nbr,base,rot,meshfile,pathfile,j)
+    seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vector)
 
 

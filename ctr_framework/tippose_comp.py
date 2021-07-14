@@ -108,12 +108,12 @@ if __name__ == '__main__':
     from openmdao.api import IndepVarComp
     
     group = Group()
-    n=4
+    n=10
     k=1
     comp = IndepVarComp()
     comp.add_output('p', val=np.random.random((n,k,3,1)))
     comp.add_output('R', val=np.random.random((n,k,3,3)))
-    comp.add_output('tube_ends_tip', val=([2.5,2,2,1]))
+    comp.add_output('tube_ends_tip', val=([9,7,4,1]))
     
 
     
@@ -131,4 +131,4 @@ if __name__ == '__main__':
     prob.model.list_outputs()
 
     prob.check_partials(compact_print=True)
-    prob.check_partials(compact_print=False)
+    # prob.check_partials(compact_print=False)

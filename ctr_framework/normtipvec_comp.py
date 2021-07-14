@@ -20,15 +20,15 @@ class NormtipvecComp(ExplicitComponent):
 
         # Inputs
         self.add_input('tipvec',shape=(k,3))
-        self.add_input('norm',shape=(k))
+        self.add_input('norm',shape=((k,1)))
 
         # Outputs
         self.add_output('norm_tipvec', shape=(k,3))
 
         
         row_indices = np.arange(k*3)
-        col_indices = np.outer(np.arange(3),np.ones(k))
-
+        col_indices = np.outer(np.arange(k),np.ones(3))
+    
         self.declare_partials('norm_tipvec', 'tipvec')
         self.declare_partials('norm_tipvec', 'norm',rows = row_indices.flatten(),cols=col_indices.flatten())
 
@@ -40,8 +40,10 @@ class NormtipvecComp(ExplicitComponent):
         tube_nbr = self.options['tube_nbr']
         tipvec = inputs['tipvec']
         norm = inputs['norm']
-
-        outputs['norm_tipvec'] = tipvec/norm[:,np.newaxis]
+        norm_tipvec = np.zeros((k,3))
+        norm_tipvec[:,:] = tipvec/norm
+        
+        outputs['norm_tipvec'] = norm_tipvec
 
 
     def compute_partials(self,inputs,partials):
@@ -53,7 +55,8 @@ class NormtipvecComp(ExplicitComponent):
 
         '''Computing Partials'''
         pnt_pn = np.zeros((k,3))
-        pnt_pn[:,:] = -tipvec * norm[:,np.newaxis]**-2
+        # pnt_pn[:,:] = -tipvec * norm[:,np.newaxis]**-2
+        pnt_pn[:,:] = -tipvec * norm**-2
         # pnt_pn[:,1] = 
         # pnt_pn[:,2] =  
 
@@ -68,10 +71,10 @@ if __name__ == '__main__':
     
     group = Group()
     n=40
-    k=3
+    k=10
     comp = IndepVarComp()
-    comp.add_output('tipvec', val=np.random.random((k,3)))
-    comp.add_output('norm', val=np.ones(k))
+    comp.add_output('tipvec', val=np.random.random((k,3))*10)
+    comp.add_output('norm', val=np.ones((k,1)))
     
 
     
@@ -88,5 +91,5 @@ if __name__ == '__main__':
     prob.run_model()
     prob.model.list_outputs()
 
-    # prob.check_partials(compact_print=True)
-    prob.check_partials(compact_print=False)
+    prob.check_partials(compact_print=True)
+    # prob.check_partials(compact_print=False)
