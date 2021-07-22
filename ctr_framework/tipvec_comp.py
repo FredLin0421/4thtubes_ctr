@@ -96,7 +96,7 @@ if __name__ == '__main__':
     k=1
     comp = IndepVarComp()
     comp.add_output('rot_p', val=np.random.random((n,k,3,1)))
-    comp.add_output('tube_ends_tip', val=(3.9,3,2.5,1))
+    comp.add_output('tube_ends_tip', val=(40.5,35.6,30,15.1))
     
 
     

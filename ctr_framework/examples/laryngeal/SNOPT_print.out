@@ -2,8 +2,7 @@
          ==============================
          S N O P T  7.2-5    (May 2007)
          ==============================
-      Verify level               0
-      Major iterations limit              75
+      Major iterations limit             100
       Minor iterations limit            1000
       Iterations limit         1000000
       Major step limit  2.00000000E+00
@@ -19,8 +18,7 @@
          ==============================
          S N O P T  7.2-5    (May 2007)
          ==============================
-      Verify level               0
-      Major iterations limit              75
+      Major iterations limit             100
       Minor iterations limit            1000
       Iterations limit         1000000
       Major step limit  2.00000000E+00
@@ -51,17 +49,17 @@
  Scale tolerance........     0.900       Minor feasibility tol..  1.00E-04       Iteration limit........   1000000
  Scale option...........         0       Minor optimality  tol..  1.00E-06       Minor print level......         1
  Crash tolerance........     0.100       Pivot tolerance........  3.25E-11       Partial price..........         1
- Crash option...........         3       Elastic weight.........  1.00E+04       Prtl price section ( A)        25
-                                         New superbasics........        99       Prtl price section (-I)        15
+ Crash option...........         3       Elastic weight.........  1.00E+04       Prtl price section ( A)        39
+                                         New superbasics........        99       Prtl price section (-I)        25
 
  The SQP Method
  --------------
  Minimize...............                 Cold start.............                 Proximal Point method..         1
- Nonlinear objectiv vars        25       Major optimality tol...  1.00E-03       Function precision.....  3.00E-13
- Unbounded step size....  1.00E+20       Superbasics limit......        25       Difference interval....  5.48E-07
- Unbounded objective....  1.00E+15       Reduced Hessian dim....        25       Central difference int.  6.70E-05
+ Nonlinear objectiv vars        39       Major optimality tol...  1.00E-03       Function precision.....  3.00E-13
+ Unbounded step size....  1.00E+20       Superbasics limit......        39       Difference interval....  5.48E-07
+ Unbounded objective....  1.00E+15       Reduced Hessian dim....        39       Central difference int.  6.70E-05
  Major step limit.......  2.00E+00       Derivative linesearch..                 Derivative level.......         3
- Major iterations limit.        75       Linesearch tolerance...   0.90000       Verify level...........         0
+ Major iterations limit.       100       Linesearch tolerance...   0.90000       Verify level...........         0
  Minor iterations limit.      1000       Penalty parameter......  0.00E+00       Major Print Level......         1
 
  Hessian Approximation
@@ -71,8 +69,8 @@
 
  Nonlinear constraints
  ---------------------
- Nonlinear constraints..        15       Major feasibility tol..  1.00E-04       Violation limit........  1.00E+06
- Nonlinear Jacobian vars        25
+ Nonlinear constraints..        25       Major feasibility tol..  1.00E-04       Violation limit........  1.00E+06
+ Nonlinear Jacobian vars        39
 
  Miscellaneous
  -------------
@@ -87,64 +85,49 @@
  Matrix statistics
  -----------------
                Total      Normal        Free       Fixed     Bounded
- Rows             15          11           0           4           0
- Columns          25           0           7           0          18
+ Rows             25          14           0           8           3
+ Columns          39           2          16           0          21
 
- No. of matrix elements                  166     Density      44.267
+ No. of matrix elements                  441     Density      45.231
  Biggest                          0.0000E+00  (excluding fixed columns,
  Smallest                         0.0000E+00   free rows, and RHS)
 
  No. of objective coefficients             0
 
- Nonlinear constraints      15     Linear constraints       0
- Nonlinear variables        25     Linear variables         0
- Jacobian  variables        25     Objective variables     25
- Total constraints          15     Total variables         25
+ Nonlinear constraints      25     Linear constraints       0
+ Nonlinear variables        39     Linear variables         0
+ Jacobian  variables        39     Objective variables     39
+ Total constraints          25     Total variables         39
 1
  
 
  
- The user has defined     166   out of     166   constraint gradients.
- The user has defined      25   out of      25   objective  gradients.
+ The user has defined     441   out of     441   constraint gradients.
+ The user has defined      39   out of      39   objective  gradients.
 
  Cheap test of user-supplied problem derivatives...
 
  The constraint gradients seem to be OK.
 
- -->  The largest discrepancy was    4.24E-06  in constraint    26
+ -->  The largest discrepancy was    4.48E-08  in constraint    42
  
 
- The objective  gradients seem to be OK.
+ XXX  The objective  gradients seem to be incorrect.
 
- Gradient projected in one direction  -1.46207801101E-01
- Difference approximation             -1.42512760788E-01
+ Gradient projected in one direction  -4.78887566109E+02
+ Difference approximation             -1.45539079074E+02
 1
  
  
 
    Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS  condHz Penalty
-     18     0     18              1 (2.2E-05) 7.9E-01  2.8036367E+00      40           16 3.0E+00         _  r
-     21     1      3 2.4E-03      4 (2.2E-05) 1.7E-01  2.8007770E+00      40           15 3.0E+00         _n r
-     25     2      4 3.4E-02      6 (2.1E-05) 9.0E-01  2.7983237E+00      40           18 2.0E+02         _s
-     26     3      1 8.5E-02      8 (1.9E-05) 1.0E+00  2.7972026E+00      40           18 6.5E+01         _
-     27     4      1 2.5E-01     10 (1.4E-05) 6.1E-01  2.7927496E+00      40           18 9.1E+01         _
-     29     5      2 2.2E-01     12 (1.1E-05) 5.3E-01  2.8171712E+00      40           17 9.6E+01 1.5E+03 _
-     31     6      2 1.0E+00     14 (1.5E-06) 9.6E-01  2.7794185E+00      40           18 4.5E+01 2.4E+03 _ M
-     32     7      1 1.0E+00     16 (7.4E-09) 1.0E+00  2.7898037E+00      40           18 9.3E+01 7.3E+04 _ M
-     34     8      2 1.0E+00     17 (8.5E-09) 4.1E-01  2.7888118E+00      40           17 5.1E+01 2.7E+02 _
-     36     9      2 1.0E+00     18 (1.2E-08) 5.1E-01  2.7859856E+00      40           16 8.4E+01 2.5E+01 _
-     38    10      2 1.0E+00     19 (6.9E-09) 7.5E-01  2.7800584E+00      23     2     17 1.5E+03 9.9E+00 _
-     42    11      4 1.0E+00     20 (6.4E-10) 1.1E+00  2.7557356E+00      22           16 3.8E+01 9.9E+00 _
-     45    12      3 1.0E+00     21 (1.1E-08) 9.4E-01  2.7042501E+00      26           14 8.6E+02 9.9E+00 _
-     48    13      3 1.0E+00     23 (2.9E-06) 1.9E-01 -2.1190692E-01      26           14 2.3E+02 9.9E+00 _n
-     51    14      3 1.0E+00     24 (6.8E-06) 1.5E+00 -1.2333286E+00      23           16 6.5E+04 9.9E+00 _
-     56    15      5 3.8E-02     28 (6.1E-06) 8.1E-01 -1.2349273E+00      32           17 1.1E+04 9.9E+00 _
-     59    16      3 2.6E-01     33 (4.8E-06) 2.1E+01 -1.3702384E+00      32           16 1.2E+03 9.9E+00 _
-     60    17      1 2.3E-12     42 (4.8E-06) 2.1E+01 -1.3702384E+00      32           16 1.2E+03 9.9E+00 _n
-     66    17      7             50 (4.8E-06) 1.6E-02 -1.3702454E+00      35     4     13 7.5E+00         _n r
-     74    18      8 3.1E-01     52 (2.1E-06) 2.2E+00 -1.3746598E+00      34           17 7.3E+00         _s
-     89    19     15 1.5E-01     56  1.0E-04  8.5E-01 -3.1715875E+00      33           17 7.0E+02         _
-
-   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS  condHz Penalty
-     92    20      3 9.5E-02     66 (6.2E-05) 6.7E+00 -1.8924629E+00      34           15 6.8E+01 1.7E+03 _
-     93    21      1 9.3E-11     73 (6.2E-05) 6.7E+00 -1.8915419E+00      34           15 6.8E+01 1.7E+03 _n
+     30     0     30              1 (2.2E-10) 9.1E-01  1.8559295E+02      33           27 4.0E+00         _  r
+     32     1      2 1.4E-05      8 (2.2E-10) 1.0E+00  1.8476479E+02      33           26 4.0E+00         _n r
+     38     2      6 6.0E-05     14 (2.2E-10) 6.1E-01  1.8370733E+02      33           31 3.0E+01         _s
+     39     3      1 4.5E-01     16 (1.2E-10) 9.2E-01  1.7547906E+02      33           31 2.1E+01         _
+     40     4      1 1.0E+00     17 (1.3E-14) 2.6E-01  1.7477569E+02      33           31 2.3E+01         _
+     41     5      1 1.0E+00     18 (1.2E-14) 2.2E-01  1.7471662E+02      33           31 5.9E+01         _
+     42     6      1 1.9E-01     20 (1.8E-14) 3.3E-01  1.7470259E+02      33           31 7.5E+01         _
+     43     7      1 1.8E-01     22 (2.6E-14) 3.3E-01  1.7470028E+02      33           31 6.8E+01         _
+     44     8      1 4.8E-09     30 (2.6E-14) 4.7E-01  1.7470028E+02      33           31 1.8E+02         _
+     48     8      5             39 (2.6E-14) 1.3E-01  1.7470028E+02      31     4     28 2.0E+00         _  r

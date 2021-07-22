@@ -69,10 +69,10 @@ if __name__ == '__main__':
     
     group = Group()
     n=1
-    k=2
+    k=3
     tar_vector = np.random.rand(k,3)
     comp = IndepVarComp()
-    comp.add_output('desptsconstraints', val=np.random.random((k,3)))
+    comp.add_output('norm_tipvec', val=np.random.random((k,3)))
     
 
     
@@ -88,6 +88,6 @@ if __name__ == '__main__':
     prob.setup()
     prob.run_model()
     prob.model.list_outputs()
-
+    
     prob.check_partials(compact_print=False)
     prob.check_partials(compact_print=True)

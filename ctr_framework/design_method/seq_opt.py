@@ -55,11 +55,14 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
     
     #### feasibility test
     #pt[-1,:] = np.array([0,0,185])
-    pt_o = np.zeros((3,3))
+    '''pt_o = np.zeros((3,3))
     pt_o[:,:] = np.array([-3,0,176])
-    pt = np.concatenate((pt,pt_o))
-    # [0,0,0],[-5,0,5],[182.5,185,182.5]
-    for i in range(0,pts_nbr,1):
+    pt = np.concatenate((pt,pt_o))'''
+    # pt = np.zeros((orient_nbr,3))
+    # pt[0,:] = np.array([-2,0,185])
+    # pt[1,:] = np.array([-2,5,182.5])
+    # pt[2,:] = np.array([-2,-5,182.5])
+    for i in range(0,orient_nbr,1):
         count = 1
         count1 = 1
         count_error=1
@@ -98,15 +101,15 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
                     # zeta = (1e-3) * multiplier1
                 zeta = (1e-2) * multiplier + zeta
                 count1+=1
-            prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,des_vector=des_vector[i,:],\
+            prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,des_vector=des_vector,\
                     pt=pt[i,:],i=i,target = pt[-1,:], center=center, lag = lag,\
                         zeta=zeta,rho=rho,eps_r=eps_r,eps_p=eps_p, eps_e=eps_e,\
-                            pt_full = pt_full, viapts_nbr=viapts_nbr, meshfile = meshfile,\
+                            pt_full = pt, viapts_nbr=viapts_nbr, meshfile = meshfile,\
                                 rotx_init=rot[0],roty_init=rot[1],rotz_init=rot[2],base = base,count=0,equ_paras = equ_paras,pt_test = pt[-1,:]))
             prob1.driver = pyOptSparseDriver()
             prob1.driver.options['optimizer'] = 'SNOPT'
             prob1.driver.opt_settings['Verify level'] = 0
-            prob1.driver.opt_settings['Major iterations limit'] = 75 
+            prob1.driver.opt_settings['Major iterations limit'] = 50
             prob1.driver.opt_settings['Minor iterations limit'] = 1000
             prob1.driver.opt_settings['Iterations limit'] = 1000000
             prob1.driver.opt_settings['Major step limit'] = 2.0
@@ -134,7 +137,7 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
             mdict1 = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
                         'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
                         'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
-                        'd7':prob1['d7'], 'd8':prob1['d8'] ,'tipvec':prob1['tipvec'],'ee':prob1['desptsconstraints'],
+                        'd7':prob1['d7'], 'd8':prob1['d8'] ,'ee':prob1['desptsconstraints'],
                         'initial_condition_dpsi':prob1['initial_condition_dpsi'],'rotx':prob1['rotx'],'roty':prob1['roty'], 'rotz':prob1['rotz'],
                         'loc':prob1['loc'],'rot_p':prob1['rot_p'],'flag':flag, 'detection':detection, 'zeta':zeta, 'dl0':prob1['tube_section_length'] + prob1['beta'],
                         'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
@@ -145,13 +148,13 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
         mdict1 = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
                         'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
                         'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
-                        'd7':prob1['d7'], 'd8':prob1['d8'],'tipvec':prob1['tipvec'],'ee':prob1['desptsconstraints'],
+                        'd7':prob1['d7'], 'd8':prob1['d8'],'ee':prob1['desptsconstraints'],'tipvec':prob1['tipvec'],
                         'initial_condition_dpsi':prob1['initial_condition_dpsi'],'rotx':prob1['rotx'],'roty':prob1['roty'], 'rotz':prob1['rotz'],
                         'loc':prob1['loc'],'rot_p':prob1['rot_p'],'flag':flag, 'detection':detection, 'zeta':zeta, 'dl0':prob1['tube_section_length'] + prob1['beta'],
                         'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
                         'lag':lag
                         }
-        scipy.io.savemat('seq_ot1'+str(i)+'.mat',mdict1)
+        scipy.io.savemat('seq_ot3'+str(i+9)+'.mat',mdict1)
         os.rename('SNOPT_print.out','SNOPT_print'+str(i)+'.out')
 
     t1 = time.time()

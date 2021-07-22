@@ -46,13 +46,13 @@ class EqudplyComp(ExplicitComponent):
         tube_nbr = self.options['tube_nbr']
         deploy_length = inputs['deploy_length']
         tube_nbr = self.options['tube_nbr']
-        w1 = 2
-        w2 = 0.5
-        w3 = 0
+        w1 = 1.5
+        w2 = 1.5
+        w3 = 1
         
         'formulation 4'
         temp = w1 * (deploy_length[:,0] - deploy_length[:,1])**2 + w2 * (deploy_length[:,1] -  deploy_length[:,2])**2 \
-                    + w3 * (deploy_length[:,2] -  deploy_length[:,3])**2
+                    # + w3 * (deploy_length[:,2] -  deploy_length[:,3])**2
         'formulation 5'
        
         self.w1 = w1
@@ -82,8 +82,8 @@ class EqudplyComp(ExplicitComponent):
         'formulation 4'
         pe_pd[:,0] = 2 * ((deploy_length[:,0] - deploy_length[:,1])) * w1 
         pe_pd[:,1] = -2 * ((deploy_length[:,0] - deploy_length[:,1])) * w1 + 2 * ((deploy_length[:,1] - deploy_length[:,2])) * w2
-        pe_pd[:,2] = -2 * ((deploy_length[:,1] - deploy_length[:,2])) * w2  +2 * ((deploy_length[:,2] - deploy_length[:,3])) * w3
-        pe_pd[:,3] = -2 * ((deploy_length[:,2] - deploy_length[:,3])) * w3
+        pe_pd[:,2] = -2 * ((deploy_length[:,1] - deploy_length[:,2])) * w2  #
+        # pe_pd[:,3] = -2 * ((deploy_length[:,2] - deploy_length[:,3])) * w3
         partials['equ_deploylength','deploy_length'][:] = pe_pd.reshape(1,-1)
 
 

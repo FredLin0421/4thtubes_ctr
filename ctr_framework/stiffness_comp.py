@@ -6,7 +6,7 @@ class StiffnessComp(ExplicitComponent):
     def initialize(self):
         self.options.declare('E', default=80, types=int)
         self.options.declare('G12', default=30, types=int)
-        self.options.declare('G3', default=80, types=int)
+        self.options.declare('G3', default=30, types=int)
         self.options.declare('tube_nbr', default=3, types=int)
         
 

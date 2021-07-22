@@ -71,9 +71,9 @@ if __name__ == '__main__':
     
     group = Group()
     n=40
-    k=10
+    k=1
     comp = IndepVarComp()
-    comp.add_output('tipvec', val=np.random.random((k,3))*10)
+    comp.add_output('tipvec', val=np.random.random((k,3))*1)
     comp.add_output('norm', val=np.ones((k,1)))
     
 

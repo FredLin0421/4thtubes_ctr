@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.core.numeric import indices
 import scipy.io
 import openmdao.api as om 
 from openmdao.api import Problem, Group, ExecComp, IndepVarComp, ScipyOptimizeDriver, pyOptSparseDriver
@@ -67,6 +68,15 @@ from ctr_framework.rotnorm_comp import RotnormComp
 from ctr_framework.dp_comp import DpComp
 from ctr_framework.crosssection_comp import CrosssectionComp
 from ctr_framework.signedfun_comp import SignedfunComp
+'end-effector'
+from ctr_framework.tippose_comp import TipposeComp
+from ctr_framework.tiptransformation_comp import TiptransformationComp
+from ctr_framework.endeffector_comp import EndeffectorComp
+from ctr_framework.rotee_comp import RoteeComp
+'orientability'
+from ctr_framework.tipvec_comp import TipvecComp
+from ctr_framework.normtipvec_comp import NormtipvecComp
+from ctr_framework.orientability_comp import OrientabilityComp
 
 'mesh'
 from ctr_framework.mesh_simul import trianglemesh
@@ -91,6 +101,7 @@ class CtrsimulGroup(om.Group):
         self.options.declare('zeta')
         self.options.declare('rho')
         self.options.declare('lag')
+        self.options.declare('des_vector')
         self.options.declare('meshfile')
         self.options.declare('jointvalues_adrs')
 
@@ -112,32 +123,34 @@ class CtrsimulGroup(om.Group):
         zeta = self.options['zeta']
         rho = self.options['rho']
         lag = self.options['lag']
+        des_vector = self.options['des_vector']
         meshfile = self.options['meshfile']
         jointvalues_adrs = self.options['jointvalues_adrs']
 
         mesh  = trianglemesh(num_nodes,k,meshfile)   
         p_ = mesh.p
         normals = mesh.normals
-        tube_length_init_ = np.array([200, 120,65]).reshape((1,3)) + 100
-        beta_init_ = np.zeros((1,3))
-        beta_init_[:,0] = -280
-        beta_init_[:,1] = -205
-        beta_init_[:,2] = -155
-        dl0 = tube_length_init_ + beta_init_ 
+        # tube_length_init_ = np.array([200, 120,65]).reshape((1,3)) + 100
+        # beta_init_ = np.zeros((1,3))
+        # beta_init_[:,0] = -280
+        # beta_init_[:,1] = -205
+        # beta_init_[:,2] = -155
+        
+        init_guess = scipy.io.loadmat(jointvalues_adrs)
+
+        dl0 = init_guess['tube_section_length'] + init_guess['beta'][0,:]
         norm1 = np.linalg.norm(pt_full[0,:]-pt_full[-1,:],ord=1.125)
         norm2 = (dl0[:,0] - dl0[:,1])**2 + (dl0[:,1] -  dl0[:,2])**2
-        norm3 = np.linalg.norm(pt_full[0,:]-pt_full[-1,:])/viapts_nbr
+        norm3 = np.linalg.norm(pt_full[0,:]-pt_full[-1,:])/10
         norm4 = 2
         norm5 = 2*np.pi 
-    
-        init_guess = scipy.io.loadmat(jointvalues_adrs)
         
-        comp1 = IndepVarComp()
-        comp1.add_output('mesh_x', val = p_[:,0])
-        comp1.add_output('mesh_y', val = p_[:,1])
-        comp1.add_output('mesh_z', val = p_[:,2])
-        comp1.add_output('pt',val=pt)
-        self.add_subsystem('mesh_comp', comp1, promotes=['*'])
+        # comp1 = IndepVarComp()
+        # comp1.add_output('mesh_x', val = p_[:,0])
+        # comp1.add_output('mesh_y', val = p_[:,1])
+        # comp1.add_output('mesh_z', val = p_[:,2])
+        # comp1.add_output('pt',val=pt)
+        # self.add_subsystem('mesh_comp', comp1, promotes=['*'])
         comp = IndepVarComp(num_nodes=num_nodes,k=k)
         comp.add_output('d1', val=init_guess['d1'])
         comp.add_output('d2', val=init_guess['d2'])
@@ -145,12 +158,14 @@ class CtrsimulGroup(om.Group):
         comp.add_output('d4', val=init_guess['d4'])
         comp.add_output('d5', val=init_guess['d5'])
         comp.add_output('d6', val=init_guess['d6'])
-        comp.add_output('kappa', shape=(1,3), val=init_guess['kappa'])
-        comp.add_output('tube_section_length',shape=(1,3),val=init_guess['tube_section_length'])
-        comp.add_output('tube_section_straight',shape=(1,3),val=init_guess['tube_section_straight'])
-        comp.add_output('alpha', shape=(k,3),val=init_guess['alpha'])
-        comp.add_output('beta', shape=(k,3),val=init_guess['beta'])
-        comp.add_output('initial_condition_dpsi', shape=(k,3), val=init_guess['initial_condition_dpsi'])
+        comp.add_output('d7', val=init_guess['d7'])
+        comp.add_output('d8', val=init_guess['d8'])
+        comp.add_output('kappa', shape=(1,tube_nbr), val=init_guess['kappa'])
+        comp.add_output('tube_section_length',shape=(1,tube_nbr),val=init_guess['tube_section_length'])
+        comp.add_output('tube_section_straight',shape=(1,tube_nbr),val=init_guess['tube_section_straight'])
+        comp.add_output('alpha', shape=(k,tube_nbr),val=init_guess['alpha'])
+        comp.add_output('beta', shape=(k,tube_nbr),val=init_guess['beta'])
+        comp.add_output('initial_condition_dpsi', shape=(k,tube_nbr), val=init_guess['initial_condition_dpsi'])
         comp.add_output('rotx',val=init_guess['rotx'])
         comp.add_output('roty',val=init_guess['roty'])
         comp.add_output('rotz',val=init_guess['rotz'])
@@ -159,38 +174,38 @@ class CtrsimulGroup(om.Group):
         
 
         # add subsystem
-        'ctr'
-        stiffness_comp = StiffnessComp()
+        'tube twist'
+        stiffness_comp = StiffnessComp(tube_nbr=tube_nbr)
         self.add_subsystem('stiffness_comp', stiffness_comp, promotes=['*'])
-        tube_ends_comp = TubeendsComp(num_nodes=num_nodes,k=k,a=a)
+        tube_ends_comp = TubeendsComp(num_nodes=num_nodes,k=k,a=a,tube_nbr=tube_nbr)
         self.add_subsystem('tube_ends_comp', tube_ends_comp, promotes=['*'])
-        interpolationkb_comp =  InterpolationkbComp(num_nodes=num_nodes,k=k)
+        interpolationkb_comp =  InterpolationkbComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('interpolationkb_comp', interpolationkb_comp, promotes=['*'])
-        tensor_comp = TensorComp(num_nodes=num_nodes,k=k)
+        tensor_comp = TensorComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('tensor_comp', tensor_comp, promotes=['*'])
-        sumkm_comp = SumkmComp(num_nodes=num_nodes,k=k)
+        sumkm_comp = SumkmComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('sumkm_comp', sumkm_comp, promotes=['*'])
-        invsumk_comp = InvsumkComp(num_nodes=num_nodes,k=k)
+        invsumk_comp = InvsumkComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('invsumk_comp', invsumk_comp, promotes=['*'])
-        k_comp = KComp(num_nodes=num_nodes, k=k)
+        k_comp = KComp(num_nodes=num_nodes, k=k,tube_nbr=tube_nbr)
         self.add_subsystem('k_comp', k_comp, promotes=['*'])
-        straightedns_comp = StraightendsComp(num_nodes=num_nodes, k=k,a=a)
+        straightedns_comp = StraightendsComp(num_nodes=num_nodes, k=k,a=a,tube_nbr=tube_nbr)
         self.add_subsystem('straightends_comp', straightedns_comp, promotes=['*'])
-        interpolationkp_comp =  InterpolationkpComp(num_nodes=num_nodes,k=k)
+        interpolationkp_comp =  InterpolationkpComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('interpolationkp_comp', interpolationkp_comp, promotes=['*'])
-        kappa_comp = KappaComp(num_nodes=num_nodes, k=k)
+        kappa_comp = KappaComp(num_nodes=num_nodes, k=k, tube_nbr = tube_nbr)
         self.add_subsystem('kappa_comp', kappa_comp, promotes=['*'])
-        kout_comp = KoutComp(num_nodes=num_nodes, k=k)
+        kout_comp = KoutComp(num_nodes=num_nodes, k=k,tube_nbr=tube_nbr)
         self.add_subsystem('kout_comp', kout_comp, promotes=['*'])
-        initialpsi_comp = InitialpsiComp(num_nodes=num_nodes,k=k)
+        initialpsi_comp = InitialpsiComp(num_nodes=num_nodes,k=k,tube_nbr = tube_nbr)
         self.add_subsystem('initialpsi_comp', initialpsi_comp, promotes=['*'])
-        finaltime_comp = FinaltimeComp()
+        finaltime_comp = FinaltimeComp(tube_nbr=tube_nbr)
         self.add_subsystem('final_comp', finaltime_comp, promotes=['*'])
 
 
         method_name = 'Lobatto2'
         'ODE 1 : kinematics'
-        ode_function1 = CtrFunction(k=k)
+        ode_function1 = CtrFunction(k=k,tube_nbr = tube_nbr)
         formulation1 = 'time-marching'
 
 
@@ -211,18 +226,20 @@ class CtrsimulGroup(om.Group):
         self.connect('integrator_group1.state:dpsi_ds','dpsi_ds')
         self.connect('integrator_group1.state:psi','psi')
 
-        u1_comp = U1Comp(num_nodes=num_nodes,k=k)
+        'backbone'
+        u1_comp = U1Comp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('u1_comp', u1_comp, promotes=['*'])
-        u2_comp = U2Comp(num_nodes=num_nodes,k=k)
+        u2_comp = U2Comp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('u2_comp', u2_comp, promotes=['*'])
-        u3_comp = U3Comp(num_nodes=num_nodes,k=k)
+        u3_comp = U3Comp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('u3_comp', u3_comp, promotes=['*'])
         u_comp = UComp(num_nodes=num_nodes,k=k)
         self.add_subsystem('u_comp', u_comp, promotes=['*'])
         uhat_comp = UhatComp(num_nodes=num_nodes,k=k)
         self.add_subsystem('uhat_comp', uhat_comp, promotes=['*'])
-        initR_comp = InitialRComp(num_nodes=num_nodes,k=k)
+        initR_comp = InitialRComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         self.add_subsystem('initR_comp', initR_comp, promotes=['*'])
+
         'ODE 2: Orientation'
         ode_function2 = BackboneFunction(k=k)
         formulation2 = 'time-marching'
@@ -238,7 +255,7 @@ class CtrsimulGroup(om.Group):
         self.connect('final_time', 'integrator_group2.final_time')
         self.connect('uhat', 'integrator_group2.dynamic_parameter:uhat')
         self.connect('initial_condition_R', 'integrator_group2.initial_condition:R')
-
+        self.connect('integrator_group2.state:R','R')
         'ODE 3: Position'
         ode_function3 = BackboneptsFunction(k=k)
         formulation3 = 'time-marching'
@@ -265,6 +282,15 @@ class CtrsimulGroup(om.Group):
         rotpcomp = RotpComp(k=k,num_nodes=num_nodes,base=base)
         self.add_subsystem('RotpComp', rotpcomp, promotes=['*'])
 
+        tiposecomp = TipposeComp(k=k,num_nodes=num_nodes,tube_nbr=tube_nbr)
+        self.add_subsystem('TipposeComp', tiposecomp, promotes=['*'])
+        tiptransformationcomp = TiptransformationComp(k=k,num_nodes=num_nodes)
+        self.add_subsystem('TiptransformationComp', tiptransformationcomp, promotes=['*'])
+        endeffectorcomp = EndeffectorComp(k=k,num_nodes=num_nodes,ee_length=5)
+        self.add_subsystem('EndeffectorComp', endeffectorcomp, promotes=['*'])
+        Roteecomp = RoteeComp(k=k,num_nodes=num_nodes)
+        self.add_subsystem('RoteeComp', Roteecomp, promotes=['*'])
+
 
 
         "Deisgn variables"
@@ -274,31 +300,34 @@ class CtrsimulGroup(om.Group):
         self.add_design_var('d4',lower= 0.2, upper=3.5)
         self.add_design_var('d5',lower= 0.2, upper=3.5)
         self.add_design_var('d6',lower= 0.2, upper=3.5)
-
-        self.add_design_var('tube_section_length',lower=20)
-        self.add_design_var('tube_section_straight',lower=15)
-        self.add_design_var('alpha')
+        #self.add_design_var('d7',lower= 0.2, upper=3.5)
+        #self.add_design_var('d8',lower= 0.2, upper=3.5)
+        
+        self.add_design_var('tube_section_length',lower=20,indices=[0,1,2])
+        self.add_design_var('tube_section_straight',lower=15,indices=[0,1,2])
+        self.add_design_var('alpha',indices=[0,1,2,3,4,5,6,7])
         temp = np.outer(np.ones(k) , -init_guess['tube_section_length']+ 2)        
-        self.add_design_var('beta', upper=-1)
-        self.add_design_var('kappa', lower=0)
+        self.add_design_var('beta', upper=-1,indices=[0,1,2,3,4,5,6,7])
+        self.add_design_var('kappa', lower=[0.001,0,0],indices=[0,1,2])
         self.add_design_var('initial_condition_dpsi')
-        self.add_design_var('rotx')
-        self.add_design_var('roty')
-        self.add_design_var('rotz')
+        # self.add_design_var('rotx')
+        # self.add_design_var('roty')
+        # self.add_design_var('rotz')
         # self.add_design_var('loc')
 
         '''Constraints'''
-        bccomp = BcComp(num_nodes=num_nodes,k=k)
-        diametercomp = DiameterComp()
-        tubeclearancecomp = TubeclearanceComp()
-        tubestraightcomp = TubestraightComp()
-        desiredpointscomp = DesiredpointsComp(num_nodes=num_nodes,k=k)
+        bccomp = BcComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
+        diametercomp = DiameterComp(tube_nbr=tube_nbr)
+        tubeclearancecomp = TubeclearanceComp(tube_nbr=tube_nbr)
+        tubestraightcomp = TubestraightComp(tube_nbr=tube_nbr)
         baseplanarcomp = BaseplanarComp(num_nodes=num_nodes,k=k,equ_paras=equ_paras)
-        deployedlenghtcomp = DeployedlengthComp(k=k)
+        # tiporientationcomp = TiporientationComp(k=k,tar_vector=tar_vector)
+        deployedlenghtcomp = DeployedlengthComp(k=k,tube_nbr=tube_nbr)
+        betacomp = BetaComp(k=k,tube_nbr=tube_nbr)
 
         self.add_subsystem('Baseplanarcomp', baseplanarcomp, promotes=['*'])
         self.add_subsystem('BcComp', bccomp, promotes=['*'])
-        self.add_subsystem('Desiredpointscomp', desiredpointscomp, promotes=['*'])
+        # self.add_subsystem('Desiredpointscomp', desiredpointscomp, promotes=['*'])
         self.add_subsystem('DeployedlengthComp', deployedlenghtcomp, promotes=['*'])
         self.add_subsystem('TubestraightComp', tubestraightcomp, promotes=['*'])
         self.add_subsystem('DiameterComp', diametercomp, promotes=['*'])
@@ -310,7 +339,7 @@ class CtrsimulGroup(om.Group):
         self.add_subsystem('rotnormComp', rotnorm, promotes=['*'])
 
         # strain
-        kappaeqcomp = KappaeqComp(num_nodes=num_nodes,k=k)
+        '''kappaeqcomp = KappaeqComp(num_nodes=num_nodes,k=k)
         gammacomp = GammaComp(num_nodes=num_nodes,k=k)
         chicomp = ChiComp(num_nodes=num_nodes,k=k,num_t = 2)
         straincomp = StrainComp(num_nodes = num_nodes,k=k,num_t= 2)
@@ -354,7 +383,7 @@ class CtrsimulGroup(om.Group):
         self.add_subsystem('KsconstraintsComp', ksconstraintscomp, promotes=['*'])
         self.add_subsystem('KsconstraintsminComp', ksconstraintsmincomp, promotes=['*'])
         self.add_subsystem('KsconstraintsComp1', ksconstraintscomp1, promotes=['*'])
-        self.add_subsystem('KsconstraintsminComp1', ksconstraintsmincomp1, promotes=['*'])
+        self.add_subsystem('KsconstraintsminComp1', ksconstraintsmincomp1, promotes=['*'])'''
 
 
         
@@ -362,16 +391,20 @@ class CtrsimulGroup(om.Group):
         self.add_constraint('torsionconstraint', equals=0.)
         # self.add_constraint('baseconstraints', lower=0)
         # self.add_constraint('tiporientation', equals=0)
-        self.add_constraint('locnorm', upper=2)
+        #self.add_constraint('locnorm', upper=2)
         self.add_constraint('deployedlength12constraint', lower=5)
         self.add_constraint('deployedlength23constraint', lower=5)
-        self.add_constraint('deployedlength', lower=10)
-        d_c = np.zeros((1,3)) + 0.1
+        self.add_constraint('deployedlength34constraint', lower=5)
+        # self.add_constraint('deployedlength', lower=10)
+        # self.add_constraint('beta12constraint', upper=-1)
+        # self.add_constraint('beta23constraint', upper=-1)
+        # self.add_constraint('beta34constraint', upper=-1)
+        d_c = np.zeros((1,tube_nbr)) + 0.1
         self.add_constraint('diameterconstraint',lower= d_c)
         self.add_constraint('tubeclearanceconstraint',lower= 0.1,upper=0.16)
         self.add_constraint('tubestraightconstraint',lower= 0)
-        self.add_constraint('strain_max1',upper=0.08)
-        self.add_constraint('strain_min1',lower=-0.08)
+        # self.add_constraint('strain_max1',upper=0.08)
+        # self.add_constraint('strain_min1',lower=-0.08)
 
         '''objective function'''
 
@@ -379,19 +412,27 @@ class CtrsimulGroup(om.Group):
         self.add_subsystem('reachtargetptsComp', reachtargetptscomp, promotes=['*'])
         targetnormcomp = TargetnormComp(k=k)
         self.add_subsystem('Targetnormcomp', targetnormcomp, promotes=['*'])
-        dpcomp = DpComp(k=k,num_nodes=num_nodes,p_=p_)
+        '''dpcomp = DpComp(k=k,num_nodes=num_nodes,p_=p_,tube_nbr=tube_nbr)
         self.add_subsystem('DpComp', dpcomp, promotes=['*'])
-        crosssectioncomp = CrosssectionComp(k=k,num_nodes=num_nodes)
-        self.add_subsystem('CrosssectionComp', crosssectioncomp, promotes=['*'])
+        # crosssectioncomp = CrosssectionComp(k=k,num_nodes=num_nodes,tube_nbr=tube_nbr)
+        # self.add_subsystem('CrosssectionComp', crosssectioncomp, promotes=['*'])
         signedfuncomp = SignedfunComp(k=k,num_nodes=num_nodes,normals=normals)
-        self.add_subsystem('SignedfunComp', signedfuncomp, promotes=['*'])
-        equdply = EqudplyComp(k=k,num_nodes=num_nodes)
+        self.add_subsystem('SignedfunComp', signedfuncomp, promotes=['*'])'''
+        equdply = EqudplyComp(k=k,num_nodes=num_nodes,tube_nbr=tube_nbr)
         self.add_subsystem('EqudplyComp', equdply, promotes=['*'])
 
+        # orientability
         
+        tipveccomp = TipvecComp(k=k,tube_nbr=tube_nbr,num_nodes=num_nodes)
+        self.add_subsystem('TipvecComp', tipveccomp, promotes=['*'])
+        normtipveccomp = NormtipvecComp(k=k,tube_nbr=tube_nbr,num_nodes=num_nodes)
+        self.add_subsystem('Normtipveccomp', normtipveccomp, promotes=['*'])
+        orientabilitycomp = OrientabilityComp(k=k,num_nodes=num_nodes,des_vector=des_vector)
+        self.add_subsystem('OrientabilityComp', orientabilitycomp, promotes=['*'])
 
         # objectives
         # rho[:k-1] = rho[k-1]*50
+        eps_o = 200
         objscomp = ObjsComp(k=k,num_nodes=num_nodes,
                             zeta=zeta,
                                 rho=rho,
@@ -404,9 +445,10 @@ class CtrsimulGroup(om.Group):
                                                             norm3 = norm3,
                                                                 norm4 = norm4,
                                                                     norm5 = norm5,
+                                                                        eps_o = eps_o,
                                                                         )
         self.add_subsystem('ObjsComp', objscomp, promotes=['*'])
-        # self.add_objective('objs')
+        self.add_objective('objs')
 
 
         
