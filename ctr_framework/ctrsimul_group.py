@@ -432,7 +432,7 @@ class CtrsimulGroup(om.Group):
 
         # objectives
         # rho[:k-1] = rho[k-1]*50
-        eps_o = 200
+        eps_o = 20 * 2
         objscomp = ObjsComp(k=k,num_nodes=num_nodes,
                             zeta=zeta,
                                 rho=rho,

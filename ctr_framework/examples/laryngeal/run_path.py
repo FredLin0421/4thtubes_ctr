@@ -13,13 +13,14 @@ num_pt = 100
 # fp = np.array([12.5, 15, 150])
 # right arms
 sp = np.array([-3,4,20])
-fp = np.array([-3,0,176])
+fp = np.array([-3,3,176])
 
 # sp = np.array([-10,35,0])
 # fp = np.array([-10,-33,-103])
 
 # mesh .PLY file
-filename = 'laryngoscopemm_52225.ply'
+# filename = 'laryngoscopemm_52225.ply'
+filename = 'right.ply'
 path_opt(num_cp,num_pt,sp,fp,filename)
 
 

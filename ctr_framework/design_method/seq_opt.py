@@ -32,7 +32,7 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
     pt_full =  initialize_pt(100,pathfile)
     p_plane = np.zeros((3,3))
     equ_paras = equofplane(p_plane[0,:],p_plane[1,:],p_plane[2,:])
-    
+    norm1 = np.linalg.norm(pt[0,:]-pt[-1,:],ord=1.125)
     center = findCircle(pt[0,1],pt[0,2], \
             pt[-1,1],pt[-1,2],pt[int(viapts_nbr/2),1],pt[int(viapts_nbr/2),2])
     mesh = trianglemesh(num_nodes,k,pt[-1,:],center,meshfile)
@@ -43,9 +43,8 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
     eps_r = 1
     eps_p = 1
     lag = 1
-    norm1 = np.linalg.norm(pt[0,:]-pt[-1,:],ord=1.125)
-    tol = np.ones((pts_nbr))*5
-    tol[viapts_nbr:] = 3 
+    tol = np.ones((pts_nbr))*4
+    tol[viapts_nbr:] = 4
     t0 = time.time()
 
     # add reachable points ----- testing
@@ -59,9 +58,12 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
     pt_o[:,:] = np.array([-3,0,176])
     pt = np.concatenate((pt,pt_o))'''
     # pt = np.zeros((orient_nbr,3))
-    # pt[0,:] = np.array([-2,0,185])
-    # pt[1,:] = np.array([-2,5,182.5])
-    # pt[2,:] = np.array([-2,-5,182.5])
+    # pt[0,:] = np.array([-3,5,182.5])
+    # pt[1,:] = np.array([-3,0,185])
+    # pt[2,:] = np.array([-3,-5,182.5])
+    # pt[3,:] = np.array([-10,0,182.5])
+    # pt[4,:] = np.array([5,0,182.5])
+
     for i in range(0,orient_nbr,1):
         count = 1
         count1 = 1
@@ -99,7 +101,8 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
             if flag==1 and count1>=1:
                 multiplier = 20*count1
                     # zeta = (1e-3) * multiplier1
-                zeta = (1e-2) * multiplier + zeta
+                # zeta = (1e-2) * multiplier + zeta
+                zeta = (5e-2) * multiplier + zeta
                 count1+=1
             prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,des_vector=des_vector,\
                     pt=pt[i,:],i=i,target = pt[-1,:], center=center, lag = lag,\
@@ -143,18 +146,18 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
                         'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
                         'lag':lag,
                         }
-            scipy.io.savemat('seq_test_flag'+str(i)+'.mat',mdict1)
+            scipy.io.savemat('seq_pre'+str(count)+'.mat',mdict1)
 
         mdict1 = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
                         'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
                         'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
-                        'd7':prob1['d7'], 'd8':prob1['d8'],'ee':prob1['desptsconstraints'],'tipvec':prob1['tipvec'],
+                        'd7':prob1['d7'], 'd8':prob1['d8'],'ee':prob1['desptsconstraints'],
                         'initial_condition_dpsi':prob1['initial_condition_dpsi'],'rotx':prob1['rotx'],'roty':prob1['roty'], 'rotz':prob1['rotz'],
                         'loc':prob1['loc'],'rot_p':prob1['rot_p'],'flag':flag, 'detection':detection, 'zeta':zeta, 'dl0':prob1['tube_section_length'] + prob1['beta'],
                         'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
                         'lag':lag
                         }
-        scipy.io.savemat('seq_ot3'+str(i+9)+'.mat',mdict1)
+        scipy.io.savemat('seq_r'+str(i)+'.mat',mdict1)
         os.rename('SNOPT_print.out','SNOPT_print'+str(i)+'.out')
 
     t1 = time.time()

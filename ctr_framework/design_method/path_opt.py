@@ -35,7 +35,7 @@ def path_opt(num_cp,num_pt,sp,fp,filename):
 
     # save  
     mdict = {'pt':prob['pt'],'cp':prob['cp']}
-    scipy.io.savemat('pathr.mat',mdict)
+    scipy.io.savemat('path_right.mat',mdict)
 
 
 

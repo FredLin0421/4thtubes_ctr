@@ -33,7 +33,7 @@ class ObjsComp(ExplicitComponent):
         k = self.options['k']
         zeta = self.options['zeta']
         #Inputs
-        #self.add_input('obj1',shape=(k,1))
+        self.add_input('obj1',shape=(k,1))
         self.add_input('targetnorm',shape=(k,1))
         self.add_input('equ_deploylength')
         self.add_input('locnorm')
@@ -45,7 +45,7 @@ class ObjsComp(ExplicitComponent):
 
         # partials
         
-        #self.declare_partials('objs', 'obj1')
+        self.declare_partials('objs', 'obj1')
         self.declare_partials('objs', 'rotnorm')
         self.declare_partials('objs', 'targetnorm')
         self.declare_partials('objs', 'equ_deploylength')
@@ -74,26 +74,27 @@ class ObjsComp(ExplicitComponent):
         norm3 = self.options['norm3']
         norm4 = self.options['norm4']
         norm5 = self.options['norm5']
-        #obj1 = inputs['obj1']
+        obj1 = inputs['obj1']
         equ_deploylength = inputs['equ_deploylength']
         locnorm = inputs['locnorm']
         rotnorm = inputs['rotnorm']
         targetnorm = inputs['targetnorm']
         orientability = inputs['orientability']
          
-        '''magnitude = np.sum(zeta * obj1 / norm1)\
+        magnitude = np.sum(zeta * obj1 / norm1)\
                     + eps_e * equ_deploylength / norm2 \
                         + np.sum(0.5 * rho * targetnorm**2 / (norm3**2)) \
                             + np.sum(lag * targetnorm/(norm3)) \
                                 + eps_p * locnorm/(norm4) \
                                     + eps_r * rotnorm/(norm5) \
-                                        + eps_o*(orientability) \ '''
-        magnitude =  eps_e * equ_deploylength / norm2 \
-                        + np.sum(0.5 * rho * targetnorm**2 / (norm3**2)) \
-                            + np.sum(lag * targetnorm/(norm3)) \
-                                + eps_p * locnorm/(norm4) \
-                                    + eps_r * rotnorm/(norm5) \
-                                        + eps_o*(orientability) \
+                                        + eps_o*(orientability) 
+
+        # magnitude =  eps_e * equ_deploylength / norm2 \
+        #                 + np.sum(0.5 * rho * targetnorm**2 / (norm3**2)) \
+        #                     + np.sum(lag * targetnorm/(norm3)) \
+        #                         + eps_p * locnorm/(norm4) \
+        #                             + eps_r * rotnorm/(norm5) \
+        #                                 + eps_o*(orientability) \
         
         outputs['objs'] = magnitude.squeeze()
 
@@ -119,7 +120,7 @@ class ObjsComp(ExplicitComponent):
         lag = self.options['lag']
         targetnorm = inputs['targetnorm']
 
-        #partials['objs','obj1'][:] = (zeta/norm1).T
+        partials['objs','obj1'][:] = (zeta/norm1).T
         partials['objs','targetnorm'][:] = (rho*targetnorm/(norm3**2) + lag/(norm3)).T
         partials['objs','equ_deploylength'][:] = eps_e/ norm2
         partials['objs','locnorm'][:] = eps_p/norm4

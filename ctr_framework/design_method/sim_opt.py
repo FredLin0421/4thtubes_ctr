@@ -35,7 +35,7 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile,des_vector):
     p_plane = np.array([[-10,35,20],[-12,20,20],\
                         [-20,15,20]])
     equ_paras = equofplane(p_plane[0,:],p_plane[1,:],p_plane[2,:])
-    norm1 = np.linalg.norm(pt[0,:]-pt[-1,:],ord=1.125)
+    
 
 
     # pt_pri =  initialize_pt(k * 2)
@@ -60,14 +60,15 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile,des_vector):
     d7 = np.zeros((k))
     d8 = np.zeros((k))
     count = 0
-    pt = np.zeros((k,3))
-    # pt[0,:] = np.array([-2,0,185])
-    pt[0,:] = np.array([-2,5,182.5])
-    pt[1,:] = np.array([-2,-5,182.5])
+    pt = np.zeros((k,3))    
+    pt[0,:] = np.array([-3,5,182.5])
+    pt[1,:] = np.array([-3,0,185])
+    pt[2,:] = np.array([-3,-5,182.5])
+    norm1 = np.linalg.norm(pt[0,:]-pt[-1,:],ord=1.125)
     for i in range(k):
         
         # configs = scipy.io.loadmat('seq_'+str(i)+'.mat')
-        configs = scipy.io.loadmat('seq_ot3'+str(i+10)+'.mat')
+        configs = scipy.io.loadmat('seq_r'+str(i)+'.mat')
         alpha_[count,:] = configs['alpha']
         beta_[count,:] = configs['beta']
         initial_condition_dpsi_[count,:] = configs['initial_condition_dpsi']
@@ -104,6 +105,7 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile,des_vector):
     multiplier_zeta = 1 
     multiplier_rho = 1
     jointvalues_adrs = 'simul.mat'
+    count1 = 0
     while flag==1 or error.any()>3:
 
         if flag==1 and i>=0:
@@ -112,7 +114,7 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile,des_vector):
         
         prob1 = Problem(model=CtrsimulGroup(tube_nbr=tube_nbr,k=k, k_=k_, num_nodes=num_nodes, a=a, i=1, \
                             pt=pt[:,:], meshfile=meshfile, jointvalues_adrs = jointvalues_adrs,\
-                            pt_full = pt_full, viapts_nbr=k, zeta = zeta_, rho=rho_, lag=lag_, des_vector=des_vector,\
+                            pt_full = pt, viapts_nbr=k, zeta = zeta_, rho=rho_, lag=lag_, des_vector=des_vector,\
                             rotx_init=rot[0],roty_init=rot[1], rotz_init=rot[2],base = base,equ_paras = equ_paras))
         i+=1
         prob1.driver = pyOptSparseDriver()
@@ -132,20 +134,32 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile,des_vector):
                                     prob1['tube_ends'],num_nodes,mesh,k)
         error = prob1['targetnorm']
         log(count,multiplier_zeta,i,flag,error,detection)
-
+        mdictf = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
+                            'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
+                            'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
+                            'initial_condition_dpsi':prob1['initial_condition_dpsi'], 'loc':prob1['loc'], 'rotx':prob1['rotx'], 'roty':prob1['roty'],
+                            'rotz':prob1['rotz'],'d7':prob1['d7'], 'd8':prob1['d8'],'ee':prob1['desptsconstraints'],'tipvec':prob1['tipvec'],
+                            'rho':rho_,'lag':lag_,'zeta':zeta_, 'eps_r':configs['eps_r'], 'eps_p':configs['eps_p'], 'eps_e':configs['eps_e'],
+                            'error':prob1['targetnorm'], 'tip_position':prob1['desptsconstraints'],
+                            }
+        scipy.io.savemat('siml_x'+str(i)+'.mat',mdictf)
+        jointvalues_adrs = 'siml_x'+str(i)+'.mat'
         if error.any() >= 3:
             multiplier_rho = error * 10
             rho_ = multiplier_rho + rho_
             lag_ = lag_ + (rho_) * error/norm1 
-        mdict2 = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
-                        'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
-                        'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
-                        'initial_condition_dpsi':prob1['initial_condition_dpsi'], 'loc':prob1['loc'], 'rotx':prob1['rotx'], 'roty':prob1['roty'],
-                        'rotz':prob1['rotz'],'d7':prob1['d7'], 'd8':prob1['d8'],'ee':prob1['desptsconstraints'],'tipvec':prob1['tipvec'],
-                        'rho':rho_,'lag':lag_,'zeta':zeta_, 'eps_r':configs['eps_r'], 'eps_p':configs['eps_p'], 'eps_e':configs['eps_e'],
-                        'error':prob1['targetnorm'], 'tip_position':prob1['desptsconstraints'],
-                        }
+        
 
-        scipy.io.savemat('siml_f_'+str(i)+'.mat',mdict2)
+        if error.any() < 3 and flag == 0 :
+            mdict2 = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
+                            'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
+                            'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
+                            'initial_condition_dpsi':prob1['initial_condition_dpsi'], 'loc':prob1['loc'], 'rotx':prob1['rotx'], 'roty':prob1['roty'],
+                            'rotz':prob1['rotz'],'d7':prob1['d7'], 'd8':prob1['d8'],'ee':prob1['desptsconstraints'],'tipvec':prob1['tipvec'],
+                            'rho':rho_,'lag':lag_,'zeta':zeta_, 'eps_r':configs['eps_r'], 'eps_p':configs['eps_p'], 'eps_e':configs['eps_e'],
+                            'error':prob1['targetnorm'], 'tip_position':prob1['desptsconstraints'],
+                            }
+            scipy.io.savemat('siml_f_'+str(i)+'.mat',mdict2)
+            break
     
 

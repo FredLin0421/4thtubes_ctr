@@ -17,15 +17,16 @@ class StrainComp(ExplicitComponent):
         num_nodes = self.options['num_nodes']
         k = self.options['k']
         num_t = self.options['num_t']
+        tube_nbr = self.options['tube_nbr']
         
         
 
         #Inputs
         
-        self.add_input('chi', shape=(num_nodes,k,num_t,3))
-        self.add_input('chi_eq',shape=(num_nodes,k,num_t,3))
+        self.add_input('chi', shape=(num_nodes,k,num_t,tube_nbr))
+        self.add_input('chi_eq',shape=(num_nodes,k,num_t,tube_nbr))
         # outputs 
-        self.add_output('strain',shape=(num_nodes,k,num_t,3))
+        self.add_output('strain',shape=(num_nodes,k,num_t,tube_nbr))
         
 
 
@@ -33,8 +34,8 @@ class StrainComp(ExplicitComponent):
         # partials
 
         
-        row_indices = np.arange(num_nodes*k*num_t*3)
-        col_indices = np.arange(num_nodes*k*num_t*3)
+        row_indices = np.arange(num_nodes*k*num_t*tube_nbr)
+        col_indices = np.arange(num_nodes*k*num_t*tube_nbr)
         
         
         
@@ -99,19 +100,20 @@ if __name__ == '__main__':
     n = 3
     k = 2
     t=2
+    tube_nbr = 4
     comp = IndepVarComp()
     
     # t_ends = np.random.random((n,k,3))
-    u = np.random.random((n,k,t,3))*100
+    u = np.random.random((n,k,t,tube_nbr))*100
     comp.add_output('chi', val=u)
-    comp.add_output('chi_eq', val=np.random.rand(n,k,t,3))
+    comp.add_output('chi_eq', val=np.random.rand(n,k,t,tube_nbr))
     
     
 
     group.add_subsystem('IndepVarComp', comp, promotes = ['*'])
     
     
-    comp = StrainComp(num_nodes=n,k=k,num_t=t)
+    comp = StrainComp(num_nodes=n,k=k,num_t=t,tube_nbr=tube_nbr)
     group.add_subsystem('Kappaequilcomp', comp, promotes = ['*'])
     
     prob = Problem()

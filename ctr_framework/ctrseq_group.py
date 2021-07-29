@@ -145,9 +145,10 @@ class CtrseqGroup(om.Group):
         if i == 0:
             init_guess = scipy.io.loadmat('initial.mat')
 
+        elif count > 1:
+            init_guess = scipy.io.loadmat('seq_pre'+str(count-1)+'.mat')
         else:
-            init_guess = scipy.io.loadmat('seq_ot3'+str(i-1+9)+'.mat')
-            
+            init_guess = scipy.io.loadmat('seq_r'+str(i-1)+'.mat')
         #init_guess = scipy.io.loadmat('seq_ot3'+str(i+5)+'.mat')
         
         comp = IndepVarComp(num_nodes=num_nodes,k=k)
@@ -354,11 +355,11 @@ class CtrseqGroup(om.Group):
         axis=0,
         rho=100.,
         )
-        kappaeqcomp = KappaeqComp(num_nodes=num_nodes,k=k)
-        gammacomp = GammaComp(num_nodes=num_nodes,k=k)
-        chicomp = ChiComp(num_nodes=num_nodes,k=k,num_t = num_t)
-        straincomp = StrainComp(num_nodes = num_nodes,k=k,num_t= num_t)
-        strainvirtualcomp = StrainvirtualComp(num_nodes = num_nodes,k=k,num_t= num_t)
+        kappaeqcomp = KappaeqComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
+        gammacomp = GammaComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
+        chicomp = ChiComp(num_nodes=num_nodes,k=k,num_t = num_t,tube_nbr=tube_nbr)
+        straincomp = StrainComp(num_nodes = num_nodes,k=k,num_t= num_t,tube_nbr=tube_nbr)
+        strainvirtualcomp = StrainvirtualComp(num_nodes = num_nodes,k=k,num_t= num_t,tube_nbr=tube_nbr)
         self.add_subsystem('KappaeqComp', kappaeqcomp, promotes=['*'])
         self.add_subsystem('GammaComp', gammacomp, promotes=['*'])
         self.add_subsystem('ChiComp', chicomp, promotes=['*'])
@@ -436,7 +437,7 @@ class CtrseqGroup(om.Group):
             orientabilitycomp = OrientabilityComp(k=k,num_nodes=num_nodes,des_vector=des_vector[i-viapts_nbr,:])
             self.add_subsystem('OrientabilityComp', orientabilitycomp, promotes=['*'])
             eps_o = 10'''
-        eps_o = 20 * 2
+        eps_o = 20 * 2.5
 
         objscomp = ObjsComp(k=k,num_nodes=num_nodes,
                             zeta=zeta,

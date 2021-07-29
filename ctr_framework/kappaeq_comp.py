@@ -8,6 +8,7 @@ class KappaeqComp(ExplicitComponent):
     def initialize(self):
         
         self.options.declare('k', default=2, types=int)
+        self.options.declare('tube_nbr', default=3, types=int)
         self.options.declare('num_nodes', default=3, types=int)
         
 

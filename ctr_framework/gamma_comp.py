@@ -15,15 +15,16 @@ class GammaComp(ExplicitComponent):
     def setup(self):
         num_nodes = self.options['num_nodes']
         k = self.options['k']
+        tube_nbr = self.options['tube_nbr']
         
         
 
         #Inputs
 
-        self.add_input('psi', shape=(num_nodes,k,3))
+        self.add_input('psi', shape=(num_nodes,k,tube_nbr))
         self.add_input('angle_eq',shape=(num_nodes,k))
         # outputs
-        self.add_output('gamma',shape=(num_nodes,k,3))
+        self.add_output('gamma',shape=(num_nodes,k,tube_nbr))
         
 
 
@@ -31,8 +32,8 @@ class GammaComp(ExplicitComponent):
         # partials
 
         
-        row_indices = np.arange(num_nodes*k*3)
-        col_indices = np.outer(np.arange(num_nodes*k),np.ones(3)).flatten()
+        row_indices = np.arange(num_nodes*k*tube_nbr)
+        col_indices = np.outer(np.arange(num_nodes*k),np.ones(tube_nbr)).flatten()
         
         
         
@@ -69,7 +70,7 @@ class GammaComp(ExplicitComponent):
         num_nodes = self.options['num_nodes']
         tube_nbr = self.options['tube_nbr']
 
-        partials['gamma','psi'][:] = -np.identity(num_nodes*k*3)
+        partials['gamma','psi'][:] = -np.identity(num_nodes*k*tube_nbr)
         partials['gamma','angle_eq'][:] = 1
         
         
@@ -87,8 +88,9 @@ if __name__ == '__main__':
     group = Group()
     n = 3
     k = 2
+    tube_nbr = 4
     comp = IndepVarComp()
-    u = np.random.random((n,k,3))
+    u = np.random.random((n,k,tube_nbr))
     comp.add_output('psi', val=u)
     comp.add_output('angle_eq', val=np.random.rand(n,k))
     
@@ -97,7 +99,7 @@ if __name__ == '__main__':
     group.add_subsystem('IndepVarComp', comp, promotes = ['*'])
     
     
-    comp = GammaComp(num_nodes=n,k=k)
+    comp = GammaComp(num_nodes=n,k=k,tube_nbr=tube_nbr)
     group.add_subsystem('Kappaequilcomp', comp, promotes = ['*'])
     
     prob = Problem()

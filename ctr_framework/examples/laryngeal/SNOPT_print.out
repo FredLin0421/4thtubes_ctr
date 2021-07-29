@@ -49,15 +49,15 @@
  Scale tolerance........     0.900       Minor feasibility tol..  1.00E-04       Iteration limit........   1000000
  Scale option...........         0       Minor optimality  tol..  1.00E-06       Minor print level......         1
  Crash tolerance........     0.100       Pivot tolerance........  3.25E-11       Partial price..........         1
- Crash option...........         3       Elastic weight.........  1.00E+04       Prtl price section ( A)        39
-                                         New superbasics........        99       Prtl price section (-I)        25
+ Crash option...........         3       Elastic weight.........  1.00E+04       Prtl price section ( A)        43
+                                         New superbasics........        99       Prtl price section (-I)        32
 
  The SQP Method
  --------------
  Minimize...............                 Cold start.............                 Proximal Point method..         1
- Nonlinear objectiv vars        39       Major optimality tol...  1.00E-03       Function precision.....  3.00E-13
- Unbounded step size....  1.00E+20       Superbasics limit......        39       Difference interval....  5.48E-07
- Unbounded objective....  1.00E+15       Reduced Hessian dim....        39       Central difference int.  6.70E-05
+ Nonlinear objectiv vars        43       Major optimality tol...  1.00E-03       Function precision.....  3.00E-13
+ Unbounded step size....  1.00E+20       Superbasics limit......        43       Difference interval....  5.48E-07
+ Unbounded objective....  1.00E+15       Reduced Hessian dim....        43       Central difference int.  6.70E-05
  Major step limit.......  2.00E+00       Derivative linesearch..                 Derivative level.......         3
  Major iterations limit.       100       Linesearch tolerance...   0.90000       Verify level...........         0
  Minor iterations limit.      1000       Penalty parameter......  0.00E+00       Major Print Level......         1
@@ -69,8 +69,8 @@
 
  Nonlinear constraints
  ---------------------
- Nonlinear constraints..        25       Major feasibility tol..  1.00E-04       Violation limit........  1.00E+06
- Nonlinear Jacobian vars        39
+ Nonlinear constraints..        32       Major feasibility tol..  1.00E-04       Violation limit........  1.00E+06
+ Nonlinear Jacobian vars        43
 
  Miscellaneous
  -------------
@@ -85,49 +85,40 @@
  Matrix statistics
  -----------------
                Total      Normal        Free       Fixed     Bounded
- Rows             25          14           0           8           3
- Columns          39           2          16           0          21
+ Rows             32          17           0          12           3
+ Columns          43           2          20           0          21
 
- No. of matrix elements                  441     Density      45.231
+ No. of matrix elements                  678     Density      49.273
  Biggest                          0.0000E+00  (excluding fixed columns,
  Smallest                         0.0000E+00   free rows, and RHS)
 
  No. of objective coefficients             0
 
- Nonlinear constraints      25     Linear constraints       0
- Nonlinear variables        39     Linear variables         0
- Jacobian  variables        39     Objective variables     39
- Total constraints          25     Total variables         39
+ Nonlinear constraints      32     Linear constraints       0
+ Nonlinear variables        43     Linear variables         0
+ Jacobian  variables        43     Objective variables     43
+ Total constraints          32     Total variables         43
 1
  
 
  
- The user has defined     441   out of     441   constraint gradients.
- The user has defined      39   out of      39   objective  gradients.
+ The user has defined     678   out of     678   constraint gradients.
+ The user has defined      43   out of      43   objective  gradients.
 
  Cheap test of user-supplied problem derivatives...
 
  The constraint gradients seem to be OK.
 
- -->  The largest discrepancy was    4.48E-08  in constraint    42
+ -->  The largest discrepancy was    4.72E-08  in constraint    55
  
 
  XXX  The objective  gradients seem to be incorrect.
 
- Gradient projected in one direction  -4.78887566109E+02
- Difference approximation             -1.45539079074E+02
+ Gradient projected in one direction  -3.02552397869E+05
+ Difference approximation              7.17887459681E+05
 1
  
  
 
    Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS  condHz Penalty
-     30     0     30              1 (2.2E-10) 9.1E-01  1.8559295E+02      33           27 4.0E+00         _  r
-     32     1      2 1.4E-05      8 (2.2E-10) 1.0E+00  1.8476479E+02      33           26 4.0E+00         _n r
-     38     2      6 6.0E-05     14 (2.2E-10) 6.1E-01  1.8370733E+02      33           31 3.0E+01         _s
-     39     3      1 4.5E-01     16 (1.2E-10) 9.2E-01  1.7547906E+02      33           31 2.1E+01         _
-     40     4      1 1.0E+00     17 (1.3E-14) 2.6E-01  1.7477569E+02      33           31 2.3E+01         _
-     41     5      1 1.0E+00     18 (1.2E-14) 2.2E-01  1.7471662E+02      33           31 5.9E+01         _
-     42     6      1 1.9E-01     20 (1.8E-14) 3.3E-01  1.7470259E+02      33           31 7.5E+01         _
-     43     7      1 1.8E-01     22 (2.6E-14) 3.3E-01  1.7470028E+02      33           31 6.8E+01         _
-     44     8      1 4.8E-09     30 (2.6E-14) 4.7E-01  1.7470028E+02      33           31 1.8E+02         _
-     48     8      5             39 (2.6E-14) 1.3E-01  1.7470028E+02      31     4     28 2.0E+00         _  r
+     29     0     29              1 (8.5E-16) 6.3E+00  8.6114346E+02      57           18 4.0E+00         _  r
