@@ -18,7 +18,7 @@ from ctr_framework.log import log
 from ctr_framework.equofplane import equofplane
 from ctr_framework.findcircle import findCircle
 
-def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vector):
+def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j):
 
     #new line
     pts_nbr = viapts_nbr + orient_nbr
@@ -28,8 +28,8 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
     k=1
     a = 30
     pt = initialize_pt(viapts_nbr,pathfile)
-    pt_pri =  initialize_pt(viapts_nbr * 2,pathfile)
-    pt_full =  initialize_pt(100,pathfile)
+    # pt_pri =  initialize_pt(viapts_nbr * 2,pathfile)
+    pt_full =  initialize_pt(viapts_nbr,pathfile)
     p_plane = np.zeros((3,3))
     equ_paras = equofplane(p_plane[0,:],p_plane[1,:],p_plane[2,:])
     norm1 = np.linalg.norm(pt[0,:]-pt[-1,:],ord=1.125)
@@ -64,7 +64,7 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
     # pt[3,:] = np.array([-10,0,182.5])
     # pt[4,:] = np.array([5,0,182.5])
 
-    for i in range(0,orient_nbr,1):
+    for i in range(0,viapts_nbr,1):
         count = 1
         count1 = 1
         count_error=1
@@ -72,31 +72,10 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
         flag = 1
         error = 1
         lag = 1
+        rho = 1 # test
+        zeta = 0 # test
         while flag==1 or error>tol[i]:
                 
-            # if count >= 10:
-                
-            #     if flag==1:
-            #         multiplier = 20*count1
-            #         zeta = (1e-3) * multiplier + zeta
-            #         count1+=1
-
-            #     prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,\
-            #             pt=pt_pri[(i+1)*2-1,:],i=i,target = pt[-1,:], center=center, lag = lag,\
-            #                 zeta=zeta,rho=rho,eps_r=eps_r,eps_p=eps_p, eps_e=eps_e, \
-            #                     pt_full = pt, viapts_nbr=viapts_nbr, meshfile = meshfile,\
-            #                         rotx_init=rot[0],roty_init=rot[1],rotz_init=rot[2],base = base,count=0,equ_paras = equ_paras,pt_test = pt[-1,:]))
-            # else:
-                
-            #     if flag==1:
-            #         multiplier = 20 * count
-            #         zeta = 1e-3 * multiplier + zeta
-                
-            #     prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,\
-            #             pt=pt[i,:],i=i,target = pt[-1,:], center=center, lag = lag,\
-            #                 zeta=zeta,rho=rho,eps_r=eps_r,eps_p=eps_p, eps_e=eps_e,\
-            #                     pt_full = pt, viapts_nbr=viapts_nbr, meshfile = meshfile,\
-            #                         rotx_init=rot[0],roty_init=rot[1],rotz_init=rot[2],base = base,count=0,equ_paras = equ_paras,pt_test = pt[-1,:]))
             #option 2
             if flag==1 and count1>=1:
                 multiplier = 20*count1
@@ -104,7 +83,7 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
                 # zeta = (1e-2) * multiplier + zeta
                 zeta = (5e-2) * multiplier + zeta
                 count1+=1
-            prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,des_vector=des_vector,\
+            prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,\
                     pt=pt[i,:],i=i,target = pt[-1,:], center=center, lag = lag,\
                         zeta=zeta,rho=rho,eps_r=eps_r,eps_p=eps_p, eps_e=eps_e,\
                             pt_full = pt, viapts_nbr=viapts_nbr, meshfile = meshfile,\
@@ -157,7 +136,7 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vec
                         'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
                         'lag':lag
                         }
-        scipy.io.savemat('seq_r'+str(i)+'.mat',mdict1)
+        scipy.io.savemat('seq1_'+str(i)+'.mat',mdict1)
         os.rename('SNOPT_print.out','SNOPT_print'+str(i)+'.out')
 
     t1 = time.time()

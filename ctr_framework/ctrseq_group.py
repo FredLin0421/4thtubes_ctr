@@ -106,7 +106,7 @@ class CtrseqGroup(om.Group):
         self.options.declare('pt_full')
         self.options.declare('viapts_nbr')
         self.options.declare('meshfile')
-        self.options.declare('des_vector')
+        # self.options.declare('des_vector')
         
         
 
@@ -135,20 +135,20 @@ class CtrseqGroup(om.Group):
         pt_full = self.options['pt_full']
         viapts_nbr = self.options['viapts_nbr']
         meshfile = self.options['meshfile']
-        des_vector = self.options['des_vector']
+        # des_vector = self.options['des_vector']
         # mesh processing
         mesh  = trianglemesh(num_nodes,k,pt_test,center,meshfile)  
         p_ = mesh.p
         normals = mesh.normals
         
         
-        if i == 0:
-            init_guess = scipy.io.loadmat('initial.mat')
-
-        elif count > 1:
-            init_guess = scipy.io.loadmat('seq_pre'+str(count-1)+'.mat')
-        else:
-            init_guess = scipy.io.loadmat('seq_r'+str(i-1)+'.mat')
+        # if i == 0:
+            # init_guess = scipy.io.loadmat('initial.mat')
+        init_guess = scipy.io.loadmat('init_1.mat')
+        # elif count > 1:
+        #     init_guess = scipy.io.loadmat('seq_pre'+str(count-1)+'.mat')
+        # else:
+            # init_guess = scipy.io.loadmat('seq_r'+str(i-1)+'.mat')
         #init_guess = scipy.io.loadmat('seq_ot3'+str(i+5)+'.mat')
         
         comp = IndepVarComp(num_nodes=num_nodes,k=k)
@@ -161,15 +161,15 @@ class CtrseqGroup(om.Group):
         comp.add_output('d7', val=init_guess['d7'])
         comp.add_output('d8', val=init_guess['d8'])
         comp.add_output('kappa', shape=(1,tube_nbr), val=init_guess['kappa'])
-        comp.add_output('tube_section_length',shape=(1,tube_nbr),val=init_guess['tube_section_length'])
-        comp.add_output('tube_section_straight',shape=(1,tube_nbr),val=init_guess['tube_section_straight'])
+        comp.add_output('tube_section_length',shape=(1,tube_nbr),val=init_guess['tube_section_length'].T)
+        comp.add_output('tube_section_straight',shape=(1,tube_nbr),val=init_guess['tube_section_straight'].T)
         comp.add_output('alpha', shape=(k,tube_nbr),val=init_guess['alpha'])
         comp.add_output('beta', shape=(k,tube_nbr),val=init_guess['beta'])
         comp.add_output('initial_condition_dpsi', shape=(k,tube_nbr), val=init_guess['initial_condition_dpsi'])
         comp.add_output('rotx',val=init_guess['rotx'])
         comp.add_output('roty',val=init_guess['roty'])
         comp.add_output('rotz',val=init_guess['rotz'])
-        comp.add_output('loc',shape=(3,1),val=init_guess['loc'])
+        comp.add_output('loc',shape=(3,1),val=init_guess['loc']+1e-10)
         self.add_subsystem('input_comp', comp, promotes=['*'])
 
 
@@ -300,8 +300,8 @@ class CtrseqGroup(om.Group):
         self.add_design_var('d4',lower= 0.2, upper=3.5)
         self.add_design_var('d5',lower= 0.2, upper=3.5)
         self.add_design_var('d6',lower= 0.2, upper=3.5)
-        # self.add_design_var('d7',lower= 0.2, upper=3.5)
-        # self.add_design_var('d8',lower= 0.2, upper=3.5)
+        self.add_design_var('d7',lower= 0.2, upper=3.5)
+        self.add_design_var('d8',lower= 0.2, upper=3.5)
         tube_length_init = 0
         tube_straight_init = 0
         self.add_design_var('tube_section_length',lower=20,indices=[0,1,2])
@@ -309,7 +309,7 @@ class CtrseqGroup(om.Group):
         self.add_design_var('alpha',indices=[0,1,2])
         # temp = np.outer(np.ones(k) , -init_guess['tube_section_length']+ 2)
         self.add_design_var('beta',upper=-1,indices=[0,1,2])
-        self.add_design_var('kappa', lower=[0.001,0,0],upper=1,indices=[0,1,2])
+        self.add_design_var('kappa', lower=[0.001,0,0,0],upper=.1)
         self.add_design_var('initial_condition_dpsi')
         # self.add_design_var('rotx')
         # self.add_design_var('roty')
@@ -378,9 +378,9 @@ class CtrseqGroup(om.Group):
         self.add_constraint('deployedlength23constraint', lower=5)
         self.add_constraint('deployedlength34constraint', lower=5)
         # self.add_constraint('deployedlength', lower=10)
-        # self.add_constraint('beta12constraint', upper=-1)
-        # self.add_constraint('beta23constraint', upper=-1)
-        # self.add_constraint('beta34constraint', upper=-1)
+        self.add_constraint('beta12constraint', upper=-1)
+        self.add_constraint('beta23constraint', upper=-1)
+        self.add_constraint('beta34constraint', upper=-1)
         d_c = np.zeros((1,tube_nbr)) + 0.1
         self.add_constraint('diameterconstraint',lower= d_c)
         self.add_constraint('tubeclearanceconstraint',lower= 0.1,upper=0.16)
@@ -411,11 +411,11 @@ class CtrseqGroup(om.Group):
         self.add_subsystem('TipvecComp', tipveccomp, promotes=['*'])
         normtipveccomp = NormtipvecComp(k=k,tube_nbr=tube_nbr,num_nodes=num_nodes)
         self.add_subsystem('Normtipveccomp', normtipveccomp, promotes=['*'])
-        orientabilitycomp = OrientabilityComp(k=k,num_nodes=num_nodes,des_vector=des_vector[i,:])
+        orientabilitycomp = OrientabilityComp(k=k,num_nodes=num_nodes,des_vector=init_guess['des_vector'])
         self.add_subsystem('OrientabilityComp', orientabilitycomp, promotes=['*'])
 
         # objective function
-        dl0 = init_guess['tube_section_length'] + init_guess['beta']
+        dl0 = init_guess['tube_section_length'].T + init_guess['beta']
         norm1 = np.linalg.norm(pt_full[0,:]-pt_full[-1,:],ord=1.125)
         norm2 = (dl0[:,0] - dl0[:,1])**2 + (dl0[:,1] -  dl0[:,2])**2
         norm3 = np.linalg.norm(pt_full[0,:]-pt_full[-1,:])/viapts_nbr

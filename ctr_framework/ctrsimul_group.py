@@ -206,7 +206,8 @@ class CtrsimulGroup(om.Group):
         method_name = 'Lobatto2'
         'ODE 1 : kinematics'
         ode_function1 = CtrFunction(k=k,tube_nbr = tube_nbr)
-        formulation1 = 'time-marching'
+        # formulation1 = 'time-marching'
+        formulation1 = 'solver-based'
 
 
         initial_time = 0.
@@ -242,7 +243,8 @@ class CtrsimulGroup(om.Group):
 
         'ODE 2: Orientation'
         ode_function2 = BackboneFunction(k=k)
-        formulation2 = 'time-marching'
+        # formulation2 = 'time-marching'
+        formulation2 = 'solver-based'
 
         initial_time = 0.
         normalized_times = np.linspace(0., 1, num_nodes)
@@ -258,7 +260,8 @@ class CtrsimulGroup(om.Group):
         self.connect('integrator_group2.state:R','R')
         'ODE 3: Position'
         ode_function3 = BackboneptsFunction(k=k)
-        formulation3 = 'time-marching'
+        # formulation3 = 'time-marching'
+        formulation3 = 'solver-based'
 
         initial_time = 0.
         normalized_times = np.linspace(0., 1, num_nodes)
@@ -310,12 +313,7 @@ class CtrsimulGroup(om.Group):
         self.add_design_var('beta', upper=-1,indices=[0,1,2,3,4,5,6,7])
         self.add_design_var('kappa', lower=[0.001,0,0],indices=[0,1,2])
         self.add_design_var('initial_condition_dpsi')
-        # self.add_design_var('rotx')
-        # self.add_design_var('roty')
-        # self.add_design_var('rotz')
-        # self.add_design_var('loc')
-
-        '''Constraints'''
+        
         bccomp = BcComp(num_nodes=num_nodes,k=k,tube_nbr=tube_nbr)
         diametercomp = DiameterComp(tube_nbr=tube_nbr)
         tubeclearancecomp = TubeclearanceComp(tube_nbr=tube_nbr)
@@ -332,6 +330,7 @@ class CtrsimulGroup(om.Group):
         self.add_subsystem('TubestraightComp', tubestraightcomp, promotes=['*'])
         self.add_subsystem('DiameterComp', diametercomp, promotes=['*'])
         self.add_subsystem('TubeclearanceComp', tubeclearancecomp, promotes=['*'])
+        self.add_subsystem('BetaComp', betacomp, promotes=['*'])
         # self.add_subsystem('TiporientationComp', tiporientationcomp, promotes=['*'])
         locnorm = LocnormComp(k=k_,num_nodes=num_nodes)                                
         self.add_subsystem('LocnormComp', locnorm, promotes=['*'])
@@ -396,15 +395,15 @@ class CtrsimulGroup(om.Group):
         self.add_constraint('deployedlength23constraint', lower=5)
         self.add_constraint('deployedlength34constraint', lower=5)
         # self.add_constraint('deployedlength', lower=10)
-        # self.add_constraint('beta12constraint', upper=-1)
-        # self.add_constraint('beta23constraint', upper=-1)
-        # self.add_constraint('beta34constraint', upper=-1)
+        self.add_constraint('beta12constraint', upper=-1)
+        self.add_constraint('beta23constraint', upper=-1)
+        self.add_constraint('beta34constraint', upper=-1)
         d_c = np.zeros((1,tube_nbr)) + 0.1
         self.add_constraint('diameterconstraint',lower= d_c)
         self.add_constraint('tubeclearanceconstraint',lower= 0.1,upper=0.16)
         self.add_constraint('tubestraightconstraint',lower= 0)
-        # self.add_constraint('strain_max1',upper=0.08)
-        # self.add_constraint('strain_min1',lower=-0.08)
+        #self.add_constraint('strain_max1',upper=0.08)
+        #self.add_constraint('strain_min1',lower=-0.08)
 
         '''objective function'''
 
@@ -432,7 +431,7 @@ class CtrsimulGroup(om.Group):
 
         # objectives
         # rho[:k-1] = rho[k-1]*50
-        eps_o = 20 * 2
+        eps_o = 10
         objscomp = ObjsComp(k=k,num_nodes=num_nodes,
                             zeta=zeta,
                                 rho=rho,

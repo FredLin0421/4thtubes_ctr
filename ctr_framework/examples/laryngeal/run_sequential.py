@@ -25,17 +25,17 @@ from ctr_framework.design_method.seq_opt import seq_opt
 
 for j in range(1):
     # number of waypoints
-    viapts_nbr= 27
-    orient_nbr = 3
+    viapts_nbr= 6
+    orient_nbr = 9
     k = 1
     # number of links                              
-    num_nodes = 50*2
+    num_nodes = 50
     # number of tubes
     tube_nbr = 4
 
     # initial robot configuration
     # Tube 1(inner tube) ID, OD
-    d1 = 0.65
+    '''d1 = 0.65
     d2 = 0.88
     # Tube 2 
     d3 = 1.076
@@ -54,7 +54,7 @@ for j in range(1):
     tube_straight_init = np.array([295, 230,100,15]).reshape((1,tube_nbr))
     # joint variables
     alpha_init = np.zeros((k,tube_nbr))
-    alpha_init[:,0] = -np.pi/2
+    alpha_init[:,0] = -np.pi/2 -1.57
     alpha_init[:,1] = np.pi - 1.57
     alpha_init[:,2] = -np.pi/2 -1.57
     alpha_init[:,3] = -np.pi/2 -1.57
@@ -82,8 +82,8 @@ for j in range(1):
             'd1':d1, 'd2':d2, 'd3':d3, 'd4':d4, 'd5':d5, 'd6':d6, 'd7':d7, 'd8':d8,
             'rotx':rotx_,'roty':roty_ ,'rotz':rotz_ , 'loc':loc, 'initial_condition_dpsi':init_dpsi,
             }
-    scipy.io.savemat('initial.mat',mdict)
-
+    scipy.io.savemat('initial.mat',mdict)'''
+    
     # Base frame
     # base = np.array([-10,35,20]).reshape((3,1))
     # rot = np.array([3.14,0,0]).reshape((3,1)) 
@@ -105,7 +105,7 @@ for j in range(1):
     # vec = np.array([[0,-1,1],[0,-0.5,1],[0,0,1],[0,0.5,1],[0,1,1]])
     # vec = np.array([[0,-1,1],[0,-1,1],[0,-1,1]])
     vec = np.zeros((viapts_nbr,3)) 
-    vec[:,:] = np.array([-1,0,1])
+    vec[:,:] = np.array([0,0,1])
     '''vec[1,:] = np.array([-1,1,1])
     vec[2,:] = np.array([0,1,1])
     vec[3,:] = np.array([1,1,1])
@@ -113,6 +113,6 @@ for j in range(1):
 
     des_vector[:,:] = vec / np.linalg.norm(vec)
 
-    seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j,des_vector)
+    seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j)
 
 

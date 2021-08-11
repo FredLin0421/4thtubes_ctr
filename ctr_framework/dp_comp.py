@@ -12,7 +12,6 @@ class DpComp(ExplicitComponent):
         self.options.declare('tube_nbr')
         
     
-        
     def setup(self):
         num_nodes = self.options['num_nodes']
         p_ = self.options['p_']
@@ -41,7 +40,6 @@ class DpComp(ExplicitComponent):
         self.declare_partials('normalized_dis', 'tube_ends',rows=row_indices_t,cols=col_indices_t.flatten())
         
 
-        
     def compute(self,inputs,outputs):
 
         num_nodes = self.options['num_nodes']
@@ -50,7 +48,7 @@ class DpComp(ExplicitComponent):
         rot_p = inputs['rot_p']
         tube_ends = inputs['tube_ends']
         tube_nbr = self.options['tube_nbr']
-
+        
         dis = np.zeros((num_nodes,k,p_.shape[0],3))
         normalized_dis = np.zeros((num_nodes,k,p_.shape[0],3))
         
@@ -76,7 +74,6 @@ class DpComp(ExplicitComponent):
         
         
         
-
 
     def compute_partials(self,inputs,partials):
         """ partials Jacobian of partial derivatives."""
