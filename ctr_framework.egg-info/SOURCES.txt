@@ -28,6 +28,7 @@ ctr_framework/diameter_comp.py
 ctr_framework/dp_comp.py
 ctr_framework/dsm.py
 ctr_framework/dualctrsimul_group.py
+ctr_framework/endeffector_comp.py
 ctr_framework/equdply_comp.py
 ctr_framework/equofplane.py
 ctr_framework/fibonacci_sphere.py
@@ -40,6 +41,7 @@ ctr_framework/initdpsi_comp.py
 ctr_framework/initialize.py
 ctr_framework/initpsi_comp.py
 ctr_framework/initpt.py
+ctr_framework/inside_comp.py
 ctr_framework/interpolationkb_comp.py
 ctr_framework/interpolationkp_comp.py
 ctr_framework/inv_kb.py
@@ -59,11 +61,13 @@ ctr_framework/mesh.py
 ctr_framework/mesh_path.py
 ctr_framework/mesh_simul.py
 ctr_framework/meshslicing.py
+ctr_framework/normtipvec_comp.py
 ctr_framework/obj_comp.py
 ctr_framework/objectives_comp.py
 ctr_framework/objs_comp.py
 ctr_framework/objsmulti_comp.py
 ctr_framework/optpath_comp.py
+ctr_framework/orientability_comp.py
 ctr_framework/ot_startpoint.py
 ctr_framework/pathobjective_comp.py
 ctr_framework/pathpoints_comp.py
@@ -74,6 +78,7 @@ ctr_framework/ptequdistant2_comp.py
 ctr_framework/reachtargetpts_comp.py
 ctr_framework/reducedimension_comp.py
 ctr_framework/rhs_comp.py
+ctr_framework/rotee_comp.py
 ctr_framework/rotnorm_comp.py
 ctr_framework/rotp_comp.py
 ctr_framework/s_comp.py
@@ -89,6 +94,9 @@ ctr_framework/sumkm_comp.py
 ctr_framework/targetnorm_comp.py
 ctr_framework/tensor_comp.py
 ctr_framework/tiporientation_comp.py
+ctr_framework/tippose_comp.py
+ctr_framework/tiptransformation_comp.py
+ctr_framework/tipvec_comp.py
 ctr_framework/tubeclearance_comp.py
 ctr_framework/tubeends_comp.py
 ctr_framework/tuberadii_comp.py
