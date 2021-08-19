@@ -4,7 +4,7 @@ guppy3
 jupyter-sphinx
 numpy
 numpydoc
-openmdao==2.4.0
+openmdao==3.11.0
 pint
 sphinx-code-include
 sphinx-rtd-theme

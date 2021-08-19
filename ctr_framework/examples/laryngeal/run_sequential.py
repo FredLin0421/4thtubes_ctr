@@ -1,14 +1,14 @@
 import numpy as np
 import scipy
 import os
-from openmdao.api import pyOptSparseDriver
+from openmdao.api import pyOptSparseDriver, Problem
 from openmdao.api import ScipyOptimizeDriver
 try:
     from openmdao.api import pyOptSparseDriver
 except:
     pyOptSparseDriver = None
-from ctr_framework.ctrseq_group import CtrseqGroup
-from lsdo_viz.api import Problem
+# from ctr_framework.ctrseq_group import CtrseqGroup
+# from lsdo_viz.api import Problem
 from ctr_framework.mesh import trianglemesh
 from ctr_framework.initpt import initialize_pt
 from ctr_framework.collision_check import collision_check
@@ -23,12 +23,12 @@ from ctr_framework.design_method.seq_opt import seq_opt
 ############## initialization ###########
 #########################################
 
-for j in range(30):
+for j in range(1):
     # number of waypoints
     viapts_nbr= 10
     k = 1
     # number of links                              
-    num_nodes = 50 * 3
+    num_nodes = 25
     # number of tubes
     tube_nbr = 4
 

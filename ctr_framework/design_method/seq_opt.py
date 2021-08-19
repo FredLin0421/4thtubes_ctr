@@ -3,14 +3,15 @@ import scipy
 import os
 import shutil
 import time
-from openmdao.api import pyOptSparseDriver
+from openmdao.api import pyOptSparseDriver,Problem
 from openmdao.api import ScipyOptimizeDriver
 try:
     from openmdao.api import pyOptSparseDriver
 except:
     pyOptSparseDriver = None
-from ctr_framework.ctrseq_group import CtrseqGroup
-from lsdo_viz.api import Problem
+# from ctr_framework.ctrseq_group import CtrseqGroup
+from ctr_framework.ctrseq_ozone2 import Ctrseqozone2
+# from lsdo_viz.api import Problem
 from ctr_framework.mesh import trianglemesh
 from ctr_framework.initpt import initialize_pt
 from ctr_framework.collision_check import collision_check
@@ -95,13 +96,15 @@ def seq_opt(num_nodes,viapts_nbr,base,rot,meshfile,pathfile,j):
                     # zeta = (1e-3) * multiplier1
                 zeta = (1e-2) * multiplier + zeta
                 count1+=1
-            prob1 = Problem(model=CtrseqGroup(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,\
+            prob1 = Problem(model=Ctrseqozone2(k=1, num_nodes=num_nodes, a=a, tube_nbr=tube_nbr,\
                     pt=pt[i,:],i=i,target = pt[-1,:], center=center, lag = lag,\
                         zeta=zeta,rho=rho,eps_r=eps_r,eps_p=eps_p, eps_e=eps_e,\
                             pt_full = pt, viapts_nbr=viapts_nbr, meshfile = meshfile,\
                                 rotx_init=rot[0],roty_init=rot[1],rotz_init=rot[2],base = base,count=0,equ_paras = equ_paras,pt_test = pt[-1,:]))
-            prob1.driver = pyOptSparseDriver()
-            prob1.driver.options['optimizer'] = 'SNOPT'
+            # prob1.driver = pyOptSparseDriver()
+            prob1.driver = ScipyOptimizeDriver()
+
+            prob1.driver.options['optimizer'] = 'SLSQP'
             prob1.driver.opt_settings['Verify level'] = 0
             prob1.driver.opt_settings['Major iterations limit'] = 20
             prob1.driver.opt_settings['Minor iterations limit'] = 1000

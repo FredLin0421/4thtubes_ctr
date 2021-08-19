@@ -18,18 +18,18 @@ class ODE2profile(ExplicitComponent):
         self.add_input('R',shape=(num_nodes,k,3,3))
         
         # output
-        self.add_output('state',shape=(num_nodes,k,3,3))
+        self.add_output('R_',shape=(num_nodes,k,3,3))
         
         # partials
         val = np.ones(num_nodes*k*3*3)
         rows = np.arange(num_nodes*k*3*3)
         cols = np.arange(num_nodes*k*3*3)
-        self.declare_partials('state', 'R',rows = rows, cols = cols,val=val)
+        self.declare_partials('R_', 'R',rows = rows, cols = cols,val=val)
         
     def compute(self,inputs,outputs):
         
         dp_ds = inputs['R'] 
-        outputs['state'] = dp_ds 
+        outputs['R_'] = dp_ds 
 
 
 if __name__ == '__main__':
