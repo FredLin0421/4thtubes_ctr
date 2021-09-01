@@ -63,7 +63,7 @@ class SumkmComp(ExplicitComponent):
         tube_sum = np.zeros((num_nodes,k))
         tube_sum = tube1 + tube2 + tube3 + tube4
         
-
+        
         sumkm[:,:,:,:] = tube_sum[:,:,np.newaxis,np.newaxis]
         outputs['sumkm'] = sumkm
         

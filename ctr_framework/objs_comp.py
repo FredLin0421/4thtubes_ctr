@@ -23,9 +23,6 @@ class ObjsComp(ExplicitComponent):
         self.options.declare('norm5')
         
         
-        
-        
-        
 
     '''This class is defining K tensor'''
     def setup(self):
@@ -38,7 +35,7 @@ class ObjsComp(ExplicitComponent):
         self.add_input('equ_deploylength')
         self.add_input('locnorm')
         self.add_input('rotnorm')
-        self.add_input('orientability')
+        #self.add_input('orientability')
         # outputs
         self.add_output('objs')
 
@@ -50,7 +47,7 @@ class ObjsComp(ExplicitComponent):
         self.declare_partials('objs', 'targetnorm')
         self.declare_partials('objs', 'equ_deploylength')
         self.declare_partials('objs', 'locnorm')
-        self.declare_partials('objs', 'orientability')
+        #self.declare_partials('objs', 'orientability')
         
         
 
@@ -79,7 +76,7 @@ class ObjsComp(ExplicitComponent):
         locnorm = inputs['locnorm']
         rotnorm = inputs['rotnorm']
         targetnorm = inputs['targetnorm']
-        orientability = inputs['orientability']
+        #orientability = inputs['orientability']
          
         magnitude = np.sum(zeta * obj1 / norm1)\
                     + eps_e * equ_deploylength / norm2 \
@@ -87,7 +84,7 @@ class ObjsComp(ExplicitComponent):
                             + np.sum(lag * targetnorm/(norm3)) \
                                 + eps_p * locnorm/(norm4) \
                                     + eps_r * rotnorm/(norm5) \
-                                        + eps_o*(orientability) 
+                                        #+ eps_o*(orientability) 
 
         # magnitude =  eps_e * equ_deploylength / norm2 \
         #                 + np.sum(0.5 * rho * targetnorm**2 / (norm3**2)) \
@@ -125,7 +122,7 @@ class ObjsComp(ExplicitComponent):
         partials['objs','equ_deploylength'][:] = eps_e/ norm2
         partials['objs','locnorm'][:] = eps_p/norm4
         partials['objs','rotnorm'][:] = eps_r/norm5
-        partials['objs','orientability'][:] = eps_o
+        #partials['objs','orientability'][:] = eps_o
 
 
 if __name__ == '__main__':

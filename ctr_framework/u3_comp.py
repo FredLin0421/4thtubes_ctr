@@ -10,8 +10,6 @@ class U3Comp(ExplicitComponent):
         self.options.declare('k', default=2, types=int)
         self.options.declare('num_nodes', default=1, types=int)
 
-        
-
     
     def setup(self):
         num_nodes = self.options['num_nodes']
@@ -82,7 +80,7 @@ class U3Comp(ExplicitComponent):
         tube_ends_kt[:,:,1] = tube_ends[:,:,1] * kt2
         tube_ends_kt[:,:,2] = tube_ends[:,:,2] * kt3
         tube_ends_kt[:,:,3] = tube_ends[:,:,3] * kt4
-        K[:,:,0,0] =  tube_ends_kb[:,:,0] + tube_ends_kb[:,:,1] + tube_ends_kb[:,:,2] + tube_ends_kb[:,:,3] + 1e-10
+        K[:,:,0,0] =  tube_ends_kb[:,:,0]  + tube_ends_kb[:,:,1] + tube_ends_kb[:,:,2] + tube_ends_kb[:,:,3] + 1e-10
         K[:,:,1,1] =  tube_ends_kb[:,:,0] + tube_ends_kb[:,:,1] + tube_ends_kb[:,:,2] + tube_ends_kb[:,:,3] + 1e-10
         K[:,:,2,2] =  tube_ends_kt[:,:,0] + tube_ends_kt[:,:,1] + tube_ends_kt[:,:,2] + tube_ends_kt[:,:,3] + 1e-10
 

@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.core.fromnumeric import shape
 from openmdao.api import ExplicitComponent
 
 class StiffnessComp(ExplicitComponent):
@@ -12,6 +13,7 @@ class StiffnessComp(ExplicitComponent):
 
     '''This class is defining the CombinedModelPara P1-P5'''
     def setup(self):
+        tube_nbr = self.options['tube_nbr']
         #Inputs
         self.add_input('d1')
         self.add_input('d2')
@@ -21,6 +23,7 @@ class StiffnessComp(ExplicitComponent):
         self.add_input('d6')
         self.add_input('d7')
         self.add_input('d8')
+        self.add_input('d',shape=(tube_nbr*2))
 
         # outputs
         self.add_output('kb1')
@@ -31,6 +34,10 @@ class StiffnessComp(ExplicitComponent):
         self.add_output('kt2')
         self.add_output('kt3')
         self.add_output('kt4')
+        self.add_output('kt',shape=(tube_nbr))
+        self.add_output('kb',shape=(tube_nbr))
+
+
 
 
 
@@ -52,14 +59,18 @@ class StiffnessComp(ExplicitComponent):
         self.declare_partials('kt3','d6')
         self.declare_partials('kt4','d7')
         self.declare_partials('kt4','d8')
+        col = np.arange(tube_nbr*2).flatten()
+        row = np.outer(np.arange(tube_nbr),np.ones(2)).flatten()
+        self.declare_partials('kb','d',rows=row,cols=col)
+        self.declare_partials('kt','d',rows=row,cols=col)
 
         
     def compute(self,inputs,outputs):
 
         E = self.options['E']
         G12 = self.options['G12']
-        G3 = self.options['G3']
-
+        G = self.options['G3']
+        tube_nbr = self.options['tube_nbr']
         d1 = inputs['d1']
         d2 = inputs['d2']
         d3 = inputs['d3']
@@ -69,26 +80,32 @@ class StiffnessComp(ExplicitComponent):
         d7 = inputs['d7']
         d8 = inputs['d8']
 
+        d = inputs['d']
+
+
+        kb = np.zeros((tube_nbr))
+        kt = np.zeros((tube_nbr))
         
+        outputs['kb'] = E*np.pi*(d[1::2]**4-d[::2]**4)/64
+        outputs['kt'] = G*np.pi*(d[1::2]**4-d[::2]**4)/32
 
         outputs['kb1'] = E*np.pi*(d2**4-d1**4)/64
         outputs['kb2'] = E*np.pi*(d4**4-d3**4)/64
         outputs['kb3'] = E*np.pi*(d6**4-d5**4)/64
         outputs['kb4'] = E*np.pi*(d8**4-d7**4)/64
-        outputs['kt1'] = G12*np.pi*(d2**4-d1**4)/32
-        outputs['kt2'] = G12*np.pi*(d4**4-d3**4)/32
-        outputs['kt3'] = G3*np.pi*(d6**4-d5**4)/32
-        outputs['kt4'] = G3*np.pi*(d8**4-d7**4)/32
 
-
+        outputs['kt1'] = G*np.pi*(d2**4-d1**4)/32
+        outputs['kt2'] = G*np.pi*(d4**4-d3**4)/32
+        outputs['kt3'] = G*np.pi*(d6**4-d5**4)/32
+        outputs['kt4'] = G*np.pi*(d8**4-d7**4)/32
 
 
     def compute_partials(self,inputs,partials):
         """ partials Jacobian of partial derivatives."""
         E = self.options['E']
         G12 = self.options['G12']
-        G3 = self.options['G3']
-
+        G3= self.options['G3']
+        G = G3
         d1 = inputs['d1']
         d2 = inputs['d2']
         d3 = inputs['d3']
@@ -97,8 +114,18 @@ class StiffnessComp(ExplicitComponent):
         d6 = inputs['d6']
         d7 = inputs['d7']
         d8 = inputs['d8']
+        d = inputs['d']
+        pb_pd = np.zeros((tube_nbr*2))
+        pb_pd[1::2] = E*np.pi*(4*d[1::2]**3)/64
+        pb_pd[::2] = -E*np.pi*(4*d[::2]**3)/64
 
-        # bending
+        pt_pd = np.zeros((tube_nbr*2))
+        pt_pd[1::2] = G*np.pi*(4*d[1::2]**3)/32
+        pt_pd[::2] = -G*np.pi*(4*d[::2]**3)/32
+
+        partials['kb','d'] = pb_pd.flatten()
+        partials['kt','d'] = pt_pd.flatten()
+        # # bending
         partials['kb1','d1'] = E*np.pi*(-4*d1**3)/64
         partials['kb1','d2'] = E*np.pi*(4*d2**3)/64
         partials['kb2','d3'] = E*np.pi*(-4*d3**3)/64
@@ -107,7 +134,7 @@ class StiffnessComp(ExplicitComponent):
         partials['kb3','d6'] = E*np.pi*(4*d6**3)/64
         partials['kb4','d7'] = E*np.pi*(-4*d7**3)/64
         partials['kb4','d8'] = E*np.pi*(4*d8**3)/64
-        # torsion
+        # # torsion
         partials['kt1','d1'] = G12*np.pi*(-4*d1**3)/32
         partials['kt1','d2'] = G12*np.pi*(4*d2**3)/32
         partials['kt2','d3'] = G12*np.pi*(-4*d3**3)/32
@@ -127,21 +154,22 @@ if __name__ == '__main__':
     group = Group()
     
     comp = IndepVarComp()
-    comp.add_output('d1', val=0.1)
-    comp.add_output('d2', val=0.156)
-    comp.add_output('d3', val=0.156)
-    comp.add_output('d4', val=0.156)
-    comp.add_output('d5', val=0.156)
-    comp.add_output('d6', val=0.156)
-    comp.add_output('d7', val=0.156)
-    comp.add_output('d8', val=0.156)
-
+    tube_nbr = 4
+    # comp.add_output('d1', val=0.1)
+    # comp.add_output('d2', val=0.156)
+    # comp.add_output('d3', val=0.156)
+    # comp.add_output('d4', val=0.156)
+    # comp.add_output('d5', val=0.156)
+    # comp.add_output('d6', val=0.156)
+    # comp.add_output('d7', val=0.156)
+    # comp.add_output('d8', val=0.156)
+    comp.add_output('d',shape=(tube_nbr*2))
 
     
     group.add_subsystem('IndepVarComp', comp, promotes = ['*'])
     
     
-    comp = StiffnessComp()
+    comp = StiffnessComp(tube_nbr=tube_nbr)
     group.add_subsystem('Stiffnesscomp', comp, promotes = ['*'])
     
     prob = Problem()
@@ -152,3 +180,4 @@ if __name__ == '__main__':
     prob.model.list_outputs()
 
     prob.check_partials(compact_print=True)
+    #prob.check_partials(compact_print=False)

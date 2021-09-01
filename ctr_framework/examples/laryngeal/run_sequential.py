@@ -29,7 +29,7 @@ for j in range(1):
     orient_nbr = 9
     k = 1
     # number of links                              
-    num_nodes = 50
+    num_nodes = 100
     # number of tubes
     tube_nbr = 4
 

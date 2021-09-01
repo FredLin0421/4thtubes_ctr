@@ -19,7 +19,7 @@ class RotpComp(ExplicitComponent):
         
 
         #Inputs
-        self.add_input('p', shape=(num_nodes,k,3,1))
+        self.add_input('p_', shape=(num_nodes,k,3,1))
         self.add_input('rot',shape=(3,3))
         self.add_input('loc',shape=(3,1))
         # outputs
@@ -31,7 +31,7 @@ class RotpComp(ExplicitComponent):
         
         row_indices_K = np.outer(np.arange(num_nodes*k*3),np.ones(3)).flatten()
         col_indices_K = np.tile(np.arange(3*3),num_nodes*k).flatten()
-        self.declare_partials('rot_p', 'p',rows=row_indices_p,cols=col_indices_p.flatten())
+        self.declare_partials('rot_p', 'p_',rows=row_indices_p,cols=col_indices_p.flatten())
         self.declare_partials('rot_p', 'rot',rows=row_indices_K,cols=col_indices_K)
         col_indices_l = np.outer(np.ones(num_nodes*k),np.outer(np.ones(1),np.array([0,1,2])).flatten()).flatten()
         row_indices_l = np.arange(num_nodes*k*3).flatten()
@@ -43,7 +43,7 @@ class RotpComp(ExplicitComponent):
 
         k = self.options['k']
         num_nodes= self.options['num_nodes']
-        p = inputs['p']
+        p = inputs['p_']
         rot = inputs['rot']
         loc = inputs['loc']
         base = self.options['base']
@@ -70,7 +70,7 @@ class RotpComp(ExplicitComponent):
         """ partials Jacobian of partial derivatives."""
         num_nodes = self.options['num_nodes']
         k = self.options['k']
-        p = inputs['p']
+        p = inputs['p_']
         rot = inputs['rot']
         T = self.T
         
@@ -90,7 +90,7 @@ class RotpComp(ExplicitComponent):
         pt_pr[[0,1,2,4,5,6,8,9,10],np.arange(9)] = 1
 
 
-        partials['rot_p','p'][:]= pd_pp.flatten()
+        partials['rot_p','p_'][:]= pd_pp.flatten()
         partials['rot_p','rot'][:]= pd_pt.flatten()
         partials['rot_p','loc'][:]= 1
         partials['T','rot'][:]= pt_pr

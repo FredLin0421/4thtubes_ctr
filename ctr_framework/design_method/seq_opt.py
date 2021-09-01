@@ -43,8 +43,8 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j):
     eps_r = 1
     eps_p = 1
     lag = 1
-    tol = np.ones((pts_nbr))*4
-    tol[viapts_nbr:] = 4
+    tol = np.ones((pts_nbr))*2.5
+    tol[viapts_nbr:] = 2.5
     t0 = time.time()
 
     # add reachable points ----- testing
@@ -91,7 +91,7 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j):
             prob1.driver = pyOptSparseDriver()
             prob1.driver.options['optimizer'] = 'SNOPT'
             prob1.driver.opt_settings['Verify level'] = 0
-            prob1.driver.opt_settings['Major iterations limit'] = 50
+            prob1.driver.opt_settings['Major iterations limit'] = 25
             prob1.driver.opt_settings['Minor iterations limit'] = 1000
             prob1.driver.opt_settings['Iterations limit'] = 1000000
             prob1.driver.opt_settings['Major step limit'] = 2.0
@@ -99,12 +99,35 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j):
             prob1.driver.opt_settings['Major optimality tolerance'] = 1.0e-3
             prob1.driver.opt_settings['Minor feasibility tolerance'] = 1.0e-4
             prob1.setup()
-            # prob1.run()
+            # init_guess = scipy.io.loadmat('init_2.mat')
+            # prob1.set_val('d1', val=init_guess['d1'])
+            # prob1.set_val('d2', val=init_guess['d2'])
+            # prob1.set_val('d3', val=init_guess['d3'])
+            # prob1.set_val('d4', val=init_guess['d4'])
+            # prob1.set_val('d5', val=init_guess['d5'])
+            # prob1.set_val('d6', val=init_guess['d6'])
+            # prob1.set_val('d7', val=init_guess['d7'])
+            # prob1.set_val('d8', val=init_guess['d8'])
+            # prob1.set_val('kappa', shape=(1,tube_nbr), val=init_guess['kappa'])
+            # prob1.set_val('tube_section_length',shape=(1,tube_nbr),val=init_guess['tube_section_length'].T)
+            # prob1.set_val('tube_section_straight',shape=(1,tube_nbr),val=init_guess['tube_section_straight'].T)
+            # prob1.set_val('alpha', shape=(k,tube_nbr),val=init_guess['alpha'])
+            # prob1.set_val('beta', shape=(k,tube_nbr),val=init_guess['beta'])
+            # # prob1.set_val('initial_condition_dpsi', shape=(k,tube_nbr), val=init_guess['initial_condition_dpsi'])
+            # prob1.set_val('rotx',val=init_guess['rotx'])
+            # prob1.set_val('roty',val=init_guess['roty'])
+            # prob1.set_val('rotz',val=init_guess['rotz'])
+            # prob1.set_val('loc',shape=(3,1),val=init_guess['loc']+1e-10)
+            # coefs = np.zeros(num_nodes+1)
+            # coefs[num_nodes] = 1.
+            # # prob1.set_val('initial_condition_p', val=np.zeros((k,3,1)))
+            # prob1.set_val('initial_condition_dpsi',shape=(k,tube_nbr), val=np.random.rand(k,tube_nbr))
+            prob1.run()
             prob1.run_model()
             prob1.run_driver()
-            flag,detection = collision_check(prob1['rot_p'],prob1['d2'],prob1['d4'],prob1['d6'],\
-                                    prob1['tube_ends'],num_nodes,mesh,k)
-            error = prob1['targetnorm']
+            # flag,detection = collision_check(prob1['rot_p'],prob1['d2'],prob1['d4'],prob1['d6'],\
+            #                         prob1['tube_ends'],num_nodes,mesh,k)
+            '''error = prob1['targetnorm']
             log(count,multiplier,i,flag,error,detection)
             if error >= tol[i] or flag==1:
                 lag = lag + rho * prob1['targetnorm']/norm1
@@ -115,28 +138,28 @@ def seq_opt(num_nodes,viapts_nbr,orient_nbr,base,rot,meshfile,pathfile,j):
             elif error<tol[i] and flag==0:             
                 break
             trigger = 1
-            count+=1
-            mdict1 = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
+            count+=1'''
+            mdict1 = {'points':prob1['p_'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
                         'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
                         'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
-                        'd7':prob1['d7'], 'd8':prob1['d8'] ,'ee':prob1['desptsconstraints'],
-                        'initial_condition_dpsi':prob1['initial_condition_dpsi'],'rotx':prob1['rotx'],'roty':prob1['roty'], 'rotz':prob1['rotz'],
-                        'loc':prob1['loc'],'rot_p':prob1['rot_p'],'flag':flag, 'detection':detection, 'zeta':zeta, 'dl0':prob1['tube_section_length'] + prob1['beta'],
-                        'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
-                        'lag':lag,
+                        'd7':prob1['d7'], 'd8':prob1['d8'] ,#'ee':prob1['desptsconstraints'],
+                        # 'initial_condition_dpsi':prob1['initial_condition_dpsi'],'rotx':prob1['rotx'],'roty':prob1['roty'], 'rotz':prob1['rotz'],
+                        # 'loc':prob1['loc'],'rot_p':prob1['rot_p'],'flag':flag, 'detection':detection, 'zeta':zeta, 'dl0':prob1['tube_section_length'] + prob1['beta'],
+                        # 'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
+                        # 'lag':lag,
                         }
             scipy.io.savemat('seq_pre'+str(count)+'.mat',mdict1)
 
-        mdict1 = {'points':prob1['integrator_group3.state:p'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
+        mdict1 = {'points':prob1['p_'], 'alpha':prob1['alpha'], 'beta':prob1['beta'],'kappa':prob1['kappa'],
                         'tube_section_straight':prob1['tube_section_straight'],'tube_section_length':prob1['tube_section_length'],
                         'd1':prob1['d1'], 'd2':prob1['d2'], 'd3':prob1['d3'], 'd4':prob1['d4'], 'd5':prob1['d5'], 'd6':prob1['d6'],
-                        'd7':prob1['d7'], 'd8':prob1['d8'],'ee':prob1['desptsconstraints'],
-                        'initial_condition_dpsi':prob1['initial_condition_dpsi'],'rotx':prob1['rotx'],'roty':prob1['roty'], 'rotz':prob1['rotz'],
-                        'loc':prob1['loc'],'rot_p':prob1['rot_p'],'flag':flag, 'detection':detection, 'zeta':zeta, 'dl0':prob1['tube_section_length'] + prob1['beta'],
-                        'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
-                        'lag':lag
+                        'd7':prob1['d7'], 'd8':prob1['d8'],#'ee':prob1['desptsconstraints'],
+                        # 'initial_condition_dpsi':prob1['initial_condition_dpsi'],'rotx':prob1['rotx'],'roty':prob1['roty'], 'rotz':prob1['rotz'],
+                        # 'loc':prob1['loc'],'rot_p':prob1['rot_p'],'flag':flag, 'detection':detection, 'zeta':zeta, 'dl0':prob1['tube_section_length'] + prob1['beta'],
+                        # 'rho':rho, 'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 
+                        # 'lag':lag
                         }
-        scipy.io.savemat('seq1_'+str(i)+'.mat',mdict1)
+        scipy.io.savemat('oz2_'+str(i)+'.mat',mdict1)
         os.rename('SNOPT_print.out','SNOPT_print'+str(i)+'.out')
 
     t1 = time.time()

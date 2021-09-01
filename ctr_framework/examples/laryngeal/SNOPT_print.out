@@ -3,7 +3,7 @@
          S N O P T  7.2-5    (May 2007)
          ==============================
       Verify level               0
-      Major iterations limit              50
+      Major iterations limit              25
       Minor iterations limit            1000
       Iterations limit         1000000
       Major step limit  2.00000000E+00
@@ -20,7 +20,7 @@
          S N O P T  7.2-5    (May 2007)
          ==============================
       Verify level               0
-      Major iterations limit              50
+      Major iterations limit              25
       Minor iterations limit            1000
       Iterations limit         1000000
       Major step limit  2.00000000E+00
@@ -51,17 +51,17 @@
  Scale tolerance........     0.900       Minor feasibility tol..  1.00E-04       Iteration limit........   1000000
  Scale option...........         0       Minor optimality  tol..  1.00E-06       Minor print level......         1
  Crash tolerance........     0.100       Pivot tolerance........  3.25E-11       Partial price..........         1
- Crash option...........         3       Elastic weight.........  1.00E+04       Prtl price section ( A)        28
-                                         New superbasics........        99       Prtl price section (-I)        21
+ Crash option...........         3       Elastic weight.........  1.00E+04       Prtl price section ( A)        10
+                                         New superbasics........        99       Prtl price section (-I)         4
 
  The SQP Method
  --------------
  Minimize...............                 Cold start.............                 Proximal Point method..         1
- Nonlinear objectiv vars        28       Major optimality tol...  1.00E-03       Function precision.....  3.00E-13
- Unbounded step size....  1.00E+20       Superbasics limit......        28       Difference interval....  5.48E-07
- Unbounded objective....  1.00E+15       Reduced Hessian dim....        28       Central difference int.  6.70E-05
+ Nonlinear objectiv vars        10       Major optimality tol...  1.00E-03       Function precision.....  3.00E-13
+ Unbounded step size....  1.00E+20       Superbasics limit......        10       Difference interval....  5.48E-07
+ Unbounded objective....  1.00E+15       Reduced Hessian dim....        10       Central difference int.  6.70E-05
  Major step limit.......  2.00E+00       Derivative linesearch..                 Derivative level.......         3
- Major iterations limit.        50       Linesearch tolerance...   0.90000       Verify level...........         0
+ Major iterations limit.        25       Linesearch tolerance...   0.90000       Verify level...........         0
  Minor iterations limit.      1000       Penalty parameter......  0.00E+00       Major Print Level......         1
 
  Hessian Approximation
@@ -71,8 +71,8 @@
 
  Nonlinear constraints
  ---------------------
- Nonlinear constraints..        21       Major feasibility tol..  1.00E-04       Violation limit........  1.00E+06
- Nonlinear Jacobian vars        28
+ Nonlinear constraints..         4       Major feasibility tol..  1.00E-04       Violation limit........  1.00E+06
+ Nonlinear Jacobian vars        10
 
  Miscellaneous
  -------------
@@ -87,41 +87,44 @@
  Matrix statistics
  -----------------
                Total      Normal        Free       Fixed     Bounded
- Rows             21          14           0           4           3
- Columns          28           0           7           0          21
+ Rows              4           0           0           4           0
+ Columns          10           0           7           0           3
 
- No. of matrix elements                  213     Density      36.224
+ No. of matrix elements                   40     Density     100.000
  Biggest                          0.0000E+00  (excluding fixed columns,
  Smallest                         0.0000E+00   free rows, and RHS)
 
  No. of objective coefficients             0
 
- Nonlinear constraints      21     Linear constraints       0
- Nonlinear variables        28     Linear variables         0
- Jacobian  variables        28     Objective variables     28
- Total constraints          21     Total variables         28
+ Nonlinear constraints       4     Linear constraints       0
+ Nonlinear variables        10     Linear variables         0
+ Jacobian  variables        10     Objective variables     10
+ Total constraints           4     Total variables         10
 1
  
 
  
- The user has defined     213   out of     213   constraint gradients.
- The user has defined      28   out of      28   objective  gradients.
+ The user has defined      40   out of      40   constraint gradients.
+ The user has defined      10   out of      10   objective  gradients.
 
  Cheap test of user-supplied problem derivatives...
 
  The constraint gradients seem to be OK.
 
- -->  The largest discrepancy was    2.27E-05  in constraint    31
+ -->  The largest discrepancy was    1.75E-05  in constraint    13
  
 
- XXX  The objective  gradients seem to be incorrect.
+ The objective  gradients seem to be OK.
 
- Gradient projected in one direction  -6.29854149585E+02
- Difference approximation             -5.56412002666E+04
+ Gradient projected in one direction  -2.10365622980E+02
+ Difference approximation             -2.10641984597E+02
 1
  
  
 
    Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS  condHz Penalty
-     23     0     23              1  3.8E-04  7.4E-01 -2.9380207E+02      31           13 7.0E+00         _  r
-     31     1      8 1.4E-02      3  3.7E-04  5.5E-02 -3.3390797E+02      29           16 1.2E+01         _n r
+      3     0      3              1 (0.0E+00) 4.2E-03  2.1652495E+02       6            3 1.0E+00         _  r
+      4     1      1 1.0E+00      2 (4.8E-13) 4.3E-03  2.1548016E+02       6            3 1.0E+00         _n r
+      5     2      1 1.0E+00      3 (1.4E-11) 2.0E+00  2.1298064E+02       6            3 1.8E+00         _s
+      6     3      1 3.2E-01      5 (1.1E-11) 1.3E+00  2.1127517E+02       6            3 4.5E+00         _
+      7     4      1 1.0E+00      7 (4.5E-11) 2.0E+00  2.0858290E+02       6            3 4.5E+00         _n

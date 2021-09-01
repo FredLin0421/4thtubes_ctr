@@ -21,7 +21,7 @@ from ctr_framework.log import log
 
 
 
-def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile):
+def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile,des_vector_):
     
     mesh = trianglemesh(num_nodes,k,meshfile)
     a = 30
@@ -68,24 +68,24 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile):
     # pt[0,:] = np.array([-3,5,182.5])
     # pt[1,:] = np.array([-3,0,185])
     # pt[2,:] = np.array([-3,-5,182.5])
-    workspace = scipy.io.loadmat('workspace_f.mat')
-    # pt = np.zeros((k,3))
-    # pt[:,:] = np.tile(workspace['pt'],(9,1))
-    pt = workspace['pt']
+    workspace = scipy.io.loadmat('workspace.mat')
+    pt = np.zeros((k,3))
+    pt[:,:] = np.tile(workspace['pt'],(9,1))
+    # pt = workspace['pt']
     norm1 = np.linalg.norm(workspace['pt'][0,:]-workspace['pt'][-1,:],ord=1.125)
     for i in range(9):
-        for j in range(27):
-            # configs = scipy.io.loadmat('seq_'+str(i)+'.mat')
-            configs = scipy.io.loadmat('init_'+str(i+1)+'.mat')
+        for j in range(6):
+            configs = scipy.io.loadmat('seq'+str(i+1)+'_'+str(j)+'.mat')
+            # configs = scipy.io.loadmat('init_'+str(i+1)+'.mat')
             alpha_[count,:] = configs['alpha']
             beta_[count,:] = configs['beta']
             initial_condition_dpsi_[count,:] = configs['initial_condition_dpsi']
-            # lag_[count,:] = configs['lag']
-            # rho_[count,:] = configs['rho']
-            # zeta_[count,:] = configs['zeta']
-            lag_[count,:] = 1
-            rho_[count,:] = 20
-            zeta_[count,:] = 1e-2
+            lag_[count,:] = configs['lag']
+            rho_[count,:] = configs['rho']
+            zeta_[count,:] = configs['zeta']
+            # lag_[count,:] = 1
+            # rho_[count,:] = 20
+            # zeta_[count,:] = 1e-2
             kappa[count,:] = configs['kappa']
             tube_section_length[count,:] = configs['tube_section_length'].squeeze()
             tube_section_straight[count,:] = configs['tube_section_straight'].squeeze()
@@ -97,7 +97,7 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile):
             d6[count] = configs['d6']
             d7[count] = configs['d7']
             d8[count] = configs['d8']
-            des_vector[count,:] = configs['des_vector']
+            des_vector[count,:] = des_vector_[i,:]
             count = count+1
     
     # mdict1 = {'alpha':alpha_, 'beta':beta_,'kappa':np.sum(kappa,0)/k,'rho':rho_, 'lag':lag_, 'zeta':zeta_,
@@ -112,7 +112,7 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile):
                         'd1':np.sum(d1)/k, 'd2':np.sum(d2)/k, 'd3':np.sum(d3)/k, 'd4':np.sum(d4)/k, 'des_vector':des_vector,
                         'd5':np.sum(d5)/k, 'd6':np.sum(d6)/k,'d7':np.sum(d7)/k, 'd8':np.sum(d8)/k,
                         'initial_condition_dpsi':initial_condition_dpsi_, 'rotx':configs['rotx'],'roty':configs['roty'],'rotz':configs['rotz'],
-                        'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 'loc':configs['loc']+1e-10,
+                        'eps_r':eps_r, 'eps_p':eps_p, 'eps_e':eps_e, 'loc':configs['loc'],
                         }
     scipy.io.savemat('simul.mat',mdict1)
 
@@ -137,7 +137,7 @@ def sim_opt(tube_nbr,num_nodes,k,base,rot,meshfile,pathfile):
         i+=1
         prob1.driver = pyOptSparseDriver()
         prob1.driver.options['optimizer'] = 'SNOPT'
-        prob1.driver.opt_settings['Major iterations limit'] = 50 #1000
+        prob1.driver.opt_settings['Major iterations limit'] = 30 #1000
         prob1.driver.opt_settings['Minor iterations limit'] = 1000
         prob1.driver.opt_settings['Iterations limit'] = 1000000
         prob1.driver.opt_settings['Major step limit'] = 2.0

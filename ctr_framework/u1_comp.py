@@ -1,7 +1,6 @@
 import numpy as np
 from openmdao.api import ExplicitComponent
 
-"The RHS of psi double dot"
 
 class U1Comp(ExplicitComponent):
 
@@ -25,7 +24,7 @@ class U1Comp(ExplicitComponent):
         self.add_input('straight_ends',shape=(num_nodes,k,tube_nbr))
 
         # outputs
-        self.add_output('u1',shape=(num_nodes,k,tube_nbr,3))
+        self.add_output('u1',shape=(num_nodes,k,tube_nbr,3,1))
         
         row_indices_S = np.outer(np.arange(0,num_nodes*k*tube_nbr*3),np.ones(tube_nbr))
         col_indices_S = np.outer(np.ones(num_nodes*k),np.outer(np.ones(tube_nbr*3),np.arange(tube_nbr)).flatten())\
@@ -74,6 +73,7 @@ class U1Comp(ExplicitComponent):
         kappa[:,:,1,0,:] = np.reshape(straight_ends[:,:,1],(num_nodes,k,1))
         kappa[:,:,2,0,:] = np.reshape(straight_ends[:,:,2],(num_nodes,k,1))
         kappa[:,:,3,0,:] = np.reshape(straight_ends[:,:,3],(num_nodes,k,1))
+        #check
         
         u = R @ kappa
         dpsi_ds[:,:,0] =  dpsi_ds[:,:,0] - dpsi_ds[:,:,0]

@@ -206,8 +206,8 @@ class CtrsimulGroup(om.Group):
         method_name = 'Lobatto2'
         'ODE 1 : kinematics'
         ode_function1 = CtrFunction(k=k,tube_nbr = tube_nbr)
-        # formulation1 = 'time-marching'
-        formulation1 = 'solver-based'
+        formulation1 = 'time-marching'
+        # formulation1 = 'solver-based'
 
 
         initial_time = 0.
@@ -243,8 +243,8 @@ class CtrsimulGroup(om.Group):
 
         'ODE 2: Orientation'
         ode_function2 = BackboneFunction(k=k)
-        # formulation2 = 'time-marching'
-        formulation2 = 'solver-based'
+        formulation2 = 'time-marching'
+        # formulation2 = 'solver-based'
 
         initial_time = 0.
         normalized_times = np.linspace(0., 1, num_nodes)
@@ -260,8 +260,8 @@ class CtrsimulGroup(om.Group):
         self.connect('integrator_group2.state:R','R')
         'ODE 3: Position'
         ode_function3 = BackboneptsFunction(k=k)
-        # formulation3 = 'time-marching'
-        formulation3 = 'solver-based'
+        formulation3 = 'time-marching'
+        # formulation3 = 'solver-based'
 
         initial_time = 0.
         normalized_times = np.linspace(0., 1, num_nodes)
@@ -431,13 +431,13 @@ class CtrsimulGroup(om.Group):
 
         # objectives
         # rho[:k-1] = rho[k-1]*50
-        eps_o = 10
+        eps_o = 20*2.5
         objscomp = ObjsComp(k=k,num_nodes=num_nodes,
                             zeta=zeta,
                                 rho=rho,
-                                    eps_r=init_guess['eps_r'],
-                                        eps_p=init_guess['eps_p'],
-                                            eps_e = init_guess['eps_e'],
+                                    eps_r=1,
+                                        eps_p=1,
+                                            eps_e =1,
                                                 lag=lag,
                                                     norm1 = norm1,
                                                         norm2 = norm2,

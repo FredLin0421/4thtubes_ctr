@@ -17,23 +17,23 @@ class BcComp(ExplicitComponent):
         k = self.options['k']
         tube_nbr = self.options['tube_nbr']
 
-        self.add_input('dpsi_ds',shape=(num_nodes,k,tube_nbr))
+        self.add_input('dpsi_ds_',shape=(num_nodes,k,tube_nbr))
 
 
         self.add_output('torsionconstraint',shape=((k,tube_nbr)))
 
         # partials
-        self.declare_partials('torsionconstraint','dpsi_ds')
+        self.declare_partials('torsionconstraint','dpsi_ds_')
         
     def compute(self,inputs,outputs):
         
         num_nodes = self.options['num_nodes']
         k = self.options['k']
         tube_nbr = self.options['tube_nbr']
-        dpsi_ds = inputs['dpsi_ds']
+        dpsi_ds_ = inputs['dpsi_ds_']
         bc = np.zeros((k,tube_nbr))
     
-        bc[:,:] = dpsi_ds[-1,:,:]
+        bc[:,:] = dpsi_ds_[-1,:,:]
         
         outputs['torsionconstraint'] = bc
         
@@ -46,14 +46,14 @@ class BcComp(ExplicitComponent):
         
         num_nodes = self.options['num_nodes']
         k = self.options['k']
-        dpsi_ds = inputs['dpsi_ds']
+        dpsi_ds_ = inputs['dpsi_ds_']
         tube_nbr = self.options['tube_nbr']
         
         '''Computing Partials'''
         ppsi_dot = np.zeros((tube_nbr*k, num_nodes*k*tube_nbr))
         ppsi_dot[:,(num_nodes-1)*k*tube_nbr:] = np.identity(k*tube_nbr)
     
-        partials['torsionconstraint','dpsi_ds']= ppsi_dot
+        partials['torsionconstraint','dpsi_ds_']= ppsi_dot
 
 
 if __name__ == '__main__':
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     tip=np.random.random((k,tube_nbr))*3
     dpsi=np.random.random((num_nodes,k,tube_nbr))
     comp.add_output('tube_ends_tip',val=tip)
-    comp.add_output('dpsi_ds',val=dpsi)
+    comp.add_output('dpsi_ds_',val=dpsi)
   
     group.add_subsystem('comp1', comp, promotes = ['*'])
     

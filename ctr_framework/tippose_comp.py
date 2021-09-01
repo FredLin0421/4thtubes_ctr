@@ -9,7 +9,6 @@ class TipposeComp(ExplicitComponent):
         self.options.declare('k', default=3, types=int)
         self.options.declare('num_nodes', default=4, types=int)
 
-        
     
     def setup(self):
         num_nodes = self.options['num_nodes']
@@ -17,8 +16,8 @@ class TipposeComp(ExplicitComponent):
         tube_nbr = self.options['tube_nbr']
 
         #Inputs
-        self.add_input('R', shape=(num_nodes,k,3,3))
-        self.add_input('p', shape=(num_nodes,k,3,1))
+        self.add_input('R_', shape=(num_nodes,k,3,3))
+        self.add_input('p_', shape=(num_nodes,k,3,1))
         self.add_input('tube_ends_tip',shape=(k,tube_nbr))
 
         # outputs
@@ -28,8 +27,8 @@ class TipposeComp(ExplicitComponent):
         row_indices = np.outer(np.arange(k*3),np.ones(tube_nbr)).flatten()
         col_indices = np.outer(np.ones(k),np.outer(np.ones(3),np.arange(tube_nbr)).flatten()) + (np.arange(0,k*tube_nbr,tube_nbr).reshape(-1,1))
         # col_indices = np.outer(np.ones(k),np.outer(np.ones(3),np.arange(tube_nbr)).flatten()) + (np.arange(0,k*tube_nbr,tube_nbr).reshape(-1,1))
-        self.declare_partials('tippos', 'p')
-        self.declare_partials('tipori', 'R')
+        self.declare_partials('tippos', 'p_')
+        self.declare_partials('tipori', 'R_')
         self.declare_partials('tippos', 'tube_ends_tip',rows=row_indices, cols=col_indices.flatten())
 
        
@@ -38,8 +37,8 @@ class TipposeComp(ExplicitComponent):
 
         k = self.options['k']
         num_nodes= self.options['num_nodes']
-        p = inputs['p']
-        R = inputs['R']
+        p = inputs['p_']
+        R = inputs['R_']
         tube_ends_tip = inputs['tube_ends_tip']
         tube_nbr = self.options['tube_nbr']
 
@@ -73,7 +72,7 @@ class TipposeComp(ExplicitComponent):
         num_nodes = self.options['num_nodes']
         tube_nbr = self.options['tube_nbr']
         k = self.options['k']
-        p = inputs['p']
+        p = inputs['p_']
         interpolation_idx_r = self.interpolation_idx_r
         interpolation_idx_l = self.interpolation_idx_l
         tmp = self.tmp
@@ -98,8 +97,8 @@ class TipposeComp(ExplicitComponent):
 
 
         partials['tippos','tube_ends_tip'][:] = pd_pt.flatten()
-        partials['tippos','p'][:]= np.reshape(pd_pp,(k*3,num_nodes*k*3))
-        partials['tipori','R'][:]= po_pt
+        partials['tippos','p_'][:]= np.reshape(pd_pp,(k*3,num_nodes*k*3))
+        partials['tipori','R_'][:]= po_pt
 
 if __name__ == '__main__':
     
@@ -108,12 +107,12 @@ if __name__ == '__main__':
     from openmdao.api import IndepVarComp
     
     group = Group()
-    n=10
+    n=13
     k=1
     comp = IndepVarComp()
     comp.add_output('p', val=np.random.random((n,k,3,1)))
     comp.add_output('R', val=np.random.random((n,k,3,3)))
-    comp.add_output('tube_ends_tip', val=([9,7,4,1]))
+    comp.add_output('tube_ends_tip', val=([11,7,4,1]))
     
 
     

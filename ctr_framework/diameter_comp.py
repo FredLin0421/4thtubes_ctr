@@ -1,3 +1,4 @@
+from networkx.algorithms.structuralholes import constraint
 import numpy as np
 from openmdao.api import ExplicitComponent
 
@@ -21,8 +22,9 @@ class DiameterComp(ExplicitComponent):
         self.add_input('d6')
         self.add_input('d7')
         self.add_input('d8')
+        #self.add_input('d',shape=(tube_nbr*2))
 
-        self.add_output('diameterconstraint',shape=(1,tube_nbr))
+        self.add_output('diameterconstraint',shape=(tube_nbr))
 
         # partials        
         self.declare_partials('diameterconstraint','d1')
@@ -33,6 +35,10 @@ class DiameterComp(ExplicitComponent):
         self.declare_partials('diameterconstraint','d6')
         self.declare_partials('diameterconstraint','d7')
         self.declare_partials('diameterconstraint','d8')
+        '''col = np.arange(tube_nbr*2)
+        row = np.outer(np.arange(tube_nbr),np.ones(2))
+        
+        self.declare_partials('diameterconstraint','d',rows=row.flatten(),cols=col.flatten())'''
         
     def compute(self,inputs,outputs):
         tube_nbr = self.options['tube_nbr']
@@ -44,14 +50,14 @@ class DiameterComp(ExplicitComponent):
         d6 = inputs['d6']
         d7 = inputs['d7']
         d8 = inputs['d8']
-        constraint = np.zeros((1,tube_nbr))
-        constraint[:,0] = d2-d1
-        constraint[:,1] = d4-d3
-        constraint[:,2] = d6-d5
-        constraint[:,3] = d8-d7
-        
-
+        # d = inputs['d']
+        constraint = np.zeros((tube_nbr))
+        constraint[0] = d2-d1
+        constraint[1] = d4-d3
+        constraint[2] = d6-d5
+        constraint[3] = d8-d7
         outputs['diameterconstraint'] = constraint
+        #outputs['diameterconstraint'] = d[1::2] - d[::2]
         
         
 
@@ -87,6 +93,10 @@ class DiameterComp(ExplicitComponent):
         partials['diameterconstraint','d6'] = pdc_pd6
         partials['diameterconstraint','d7'] = pdc_pd7
         partials['diameterconstraint','d8'] = pdc_pd8
+        '''pd_pd = np.zeros((tube_nbr*2))
+        pd_pd[1::2] = 1
+        pd_pd[::2] = -1
+        partials['diameterconstraint','d'] = pd_pd.flatten()'''
 
 
         
@@ -108,13 +118,14 @@ if __name__ == '__main__':
     comp = IndepVarComp()
 
   
-    
+    tube_nbr = 4
     comp.add_output('d1',val=1)
     comp.add_output('d2',val=2.5)
     comp.add_output('d3',val=3)
     comp.add_output('d4',val=4.5)
     comp.add_output('d5',val=5)
     comp.add_output('d6',val=6)
+    comp.add_output('d',val=np.random.rand(1,tube_nbr*2))
 
   
     group.add_subsystem('comp1', comp, promotes = ['*'])
@@ -128,7 +139,7 @@ if __name__ == '__main__':
     prob.setup()
     prob.run_model()
     prob.model.list_outputs()
-    # prob.check_partials(compact_print=False)
+    prob.check_partials(compact_print=False)
     prob.check_partials(compact_print=True)
     
     

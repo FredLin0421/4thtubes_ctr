@@ -7,6 +7,7 @@ class ObjComp(ExplicitComponent):
     def initialize(self):
         self.options.declare('k', default=3, types=int)
         self.options.declare('num_nodes',default=3, types=int)
+        self.options.declare('tube_nbr',default=3, types=int)
 
         
 
@@ -14,9 +15,11 @@ class ObjComp(ExplicitComponent):
         #Inputs
 
         num_nodes = self.options['num_nodes']
+        tube_nbr = self.options['tube_nbr']
         k = self.options['k']
-        self.add_input('penalized',shape=(num_nodes,k,3))
-        self.add_output('objective',val=1)
+        self.add_input('penalized',shape=(num_nodes,k,tube_nbr))
+        # self.add_input('targetnorm',shape=(k,1))
+        self.add_output('objective')
         
         
 
@@ -24,6 +27,7 @@ class ObjComp(ExplicitComponent):
         # define indices
         # self.declare_partials('*', '*', method='fd')
         self.declare_partials('objective','penalized')
+        # self.declare_partials('objective','targetnorm')
         # self.declare_partials('objective','tube_ends_tip')
 
         
@@ -33,21 +37,12 @@ class ObjComp(ExplicitComponent):
         num_nodes = self.options['num_nodes']
         k = self.options['k']
         penalized = inputs['penalized']
+        # targetnorm = inputs['targetnorm']
         
-
-        # temp[:,:,1] = (np.tanh(np.outer(np.arange(num_nodes),np.ones(k))-tube_ends_tip[:,1])/2 + 0.5)
-        # temp[:,:,2] = (np.tanh(np.outer(np.arange(num_nodes),np.ones(k))-tube_ends_tip[:,2])/2 + 0.5)
-
-        # idx0 = np.where(tube_ends_tip == 0)
-        # idx1 = np.where(tube_ends_tip == 1)
-
-        # tube_ends_tip[idx0] = 1
-        # tube_ends_tip[idx1] = 0
-        # penalize = np.zeros((num_nodes,k,3))
-        # penalize = dpsi_ds * tube_ends_tip
                 
 
-        outputs['objective'] = np.linalg.norm(penalized)
+        outputs['objective'] = np.linalg.norm(penalized) #+ np.sum(targetnorm)
+        # outputs['objective'] = np.sum(targetnorm)
         
         
 
@@ -69,6 +64,7 @@ class ObjComp(ExplicitComponent):
         
         
         partials['objective','penalized'] =  dob_dp.flatten()
+        # partials['objective','targetnorm'] = 1
         
 
 
@@ -96,6 +92,7 @@ if __name__ == '__main__':
     n = 175
     k = 1
     comp.add_output('penalized',val=np.random.random((n,k,3)))
+    comp.add_output('targetnorm',val=np.random.random((k,1)))
     # comp.add_output('tube_ends_tip',val=np.random.random((k,3)))
 
     
